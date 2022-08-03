@@ -1,0 +1,68 @@
+# CfgVmHostTotalGuests
+query ItemsWithMetrics(
+  $epoch_start: Int!, 
+  $epoch_end: Int!, 
+  $types: [String!], 
+  $tags: [String!], 
+  $custom_tags: [String!], 
+  $item_ids: [ID!], 
+  $related_to_types: [String!]!,
+  $related_to_tags: [String!],
+  $related_to_custom_tags: [String!],
+  $related_to_item_ids: [ID!], 
+  $configs: [String!]!, 
+  $formulas: [String!]!, 
+  $summary: Int, 
+  $samples: Int
+) {
+  items(
+    types: $types
+    tags: $tags
+    custom_tags: $custom_tags
+    item_ids: $item_ids
+    related_to: [{types: $related_to_types, tags: $related_to_tags, item_ids: $related_to_item_ids, custom_tags: $related_to_custom_tags}]
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ) {
+    id
+    item_type
+    tags
+    label
+    ...Configs
+    ...Metrics
+    __typename
+  }
+}
+
+fragment Configs on Item {
+    configs (
+        epoch_end: $epoch_end
+        epoch_start: $epoch_start
+        fields: $configs
+        summary: $summary
+        samples: $samples
+    ) {
+        start_epoch
+        summary 
+        field
+        data
+    }
+}
+
+fragment Metrics on Item {
+  metrics(
+    epoch_end: $epoch_end
+    epoch_start: $epoch_start
+    formulas: $formulas
+    summary: $summary
+    samples: $samples
+  ) {
+    start_epoch
+    summary
+    formula
+    data
+    function
+    __typename
+  }
+  __typename
+}

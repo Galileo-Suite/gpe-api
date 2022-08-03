@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2021",
+    ],
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "target": "ES2019",
+    "strict":true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "outDir": "dist",
+    "types": ["node"],
+    "paths":{
+      "types/*":["lib/types/*"]
+    },
+    "typeRoots": ["lib/types"]
+  },
+  "exclude": ["./src/studio/**.ts*"],
+  "include": ["./src/**.ts", "src/worker.js"],
+}

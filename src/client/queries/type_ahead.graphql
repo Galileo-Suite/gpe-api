@@ -1,0 +1,104 @@
+query GetCustomTags(
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  type_ahead(
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ) {
+    custom_tags
+  }
+}
+
+query GetTypes(
+  $custom_tags: [String!]
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  type_ahead(
+    custom_tags: $custom_tags
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ){
+    types
+  }
+}
+
+query GetTags(
+  $custom_tags: [String!]
+  $types: [String!]
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  type_ahead(
+    custom_tags: $custom_tags 
+    types: $types
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ){
+    tags
+  }
+}
+
+query GetItems(
+  $custom_tags: [String!]
+  $types: [String!]
+  $tags: [String!]
+  $item_ids: [ID!]
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  items(
+    custom_tags: $custom_tags
+    types: $types
+    tags: $tags
+    item_ids: $item_ids
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ) {
+    id
+    label
+  }
+}
+
+
+query GetConfigs(
+  $custom_tags: [String!]
+  $types: [String!]
+  $tags: [String!]
+  $item_ids: [ID!]
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  type_ahead(
+    custom_tags: $custom_tags
+    types: $types
+    tags: $tags
+    item_ids: $item_ids
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ) {
+    config_fields
+  }
+}
+
+query GetFormulas(
+  $custom_tags: [String!]
+  $types: [String!]
+  $tags: [String!]
+  $item_ids: [ID!]
+  $epoch_start: Int!
+  $epoch_end: Int!
+) {
+  type_ahead(
+    types: $types
+    tags: $tags
+    custom_tags: $custom_tags
+    item_ids: $item_ids
+    epoch_start: $epoch_start
+    epoch_end: $epoch_end
+  ) {
+    types
+    formulas
+  }
+}
