@@ -1,20 +1,15 @@
 {
-  "name": "@galileo/gpe-api",
-  "version": "3.9.0-gpe-api.1",
-  "description": "",
+  "name": "@galileo-suite/gpe-api",
+  "version": "1.0.0",
+  "description": "A support package for exporting data from galileo-suite",
   "author": "Joe Davis",
   "main": "./dist/index.js",
   "license": "ISC",
   "scripts": {
-    "prune": "ts-prune",
     "build": "tsc",
-    "test": "mocha --watch",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "codegen": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config ./codegen.js"
-  },
-  "publishConfig": {
-    "@grs:registry": "https://codebox.galileosuite.com/api/v4/projects/541/packages/npm/"
   },
   "devDependencies": {
     "@grafana/tsconfig": "^1.2.0-rc1",
