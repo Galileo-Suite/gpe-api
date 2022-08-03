@@ -6,6 +6,8 @@ import {DataFrame, standardTransformersRegistry, standardTransformers,transformD
 import {prepareTimeSeriesTransformer} from './transformers/prepareTimeSeries/prepareTimeSeries'
 import {rowsToFieldsTransformer} from './transformers/rowsToFields/rowsToFields'
 
+import Highcharts from 'highcharts'
+
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
 
@@ -68,5 +70,29 @@ export class GpeApi {
       csv += row
     })
     return JSON.stringify(csv)
+  }
+  
+
+  
+  static buildSeriesFromDataFrame = (dataframes: DataFrame[]):Highcharts.SeriesOptionsType[] => {
+    let series: Highcharts.SeriesOptionsType[] = []
+    dataframes.forEach(frame=>{
+      const time = frame.fields.find(f=>f.type=='time')?.values.toArray()
+      if (time) {
+        frame.fields.map(f => {
+          if( f.type !== 'number') {
+            return;
+          }
+          let data: number[][] = []
+          f.values.toArray().forEach((d:number,i)=> {
+            data.push([time[i],d])
+          })
+          let seriesDef: Highcharts.SeriesOptionsType = { type:'line', data }
+          
+          series.push(seriesDef)
+        })
+      }
+    })
+    return series
   }
 }
