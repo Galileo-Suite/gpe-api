@@ -2,8 +2,6 @@ import defaults from 'lodash/defaults';
 
 import { ScopedVars, TimeRange } from '@grafana/data';
 
-import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
-
 import { GpeQuery, defaultGpeQuery } from '../types/query';
 import { unwrapOptionalTimeRange } from './unwrap-optional-time-range';
 import { ItemsWithMetricsQueryVariables } from 'src/client/queries/queries';
@@ -25,20 +23,6 @@ export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars ): T => {
   
   return JSON.parse(str) as T;
 };
-
-export const getScopedVars = ():ScopedVars => {
-  const scopedVars: ScopedVars = {};
-  getTemplateSrv().getVariables()
-    .forEach((v) => {
-      scopedVars[v.name] = {
-        //@ts-ignore
-        value: v.current.value,
-        text: v.name,
-      };
-    });
-    
-  return scopedVars
-}
 
 export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
