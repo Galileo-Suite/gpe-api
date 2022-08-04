@@ -4,7 +4,10 @@ import { metricsQuery } from './client/metrics-query'
 import { DataTransformerConfig, TimeRange,ScopedVars } from '@grafana/data'
 
 import { GpeTarget } from './types';
-import { buildItemWithMetricsVars, HighchartsPanelOptions,executeTransforms, highchartObjectFromDataPanelOptions } from './utils';
+import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
+import { HighchartsPanelOptions } from './utils/highchart-object-from-data-panel-options';
+import { executeTransforms, } from './utils/execute-transforms';
+import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
