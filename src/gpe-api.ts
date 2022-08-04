@@ -1,18 +1,19 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './client/queries/queries'
 import { metricsQuery } from './client/metrics-query'
-import { DataTransformerConfig, TimeRange,ScopedVars } from '@grafana/data'
+import { DataTransformerConfig, TimeRange,ScopedVars, dateTimeParse} from '@grafana/data'
 
-import { GpeTarget } from './types';
+import { GpeTarget,GrafanaApiConfig,GrafanaDashboard } from './types';
 import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
-import { HighchartsPanelOptions } from './utils/highchart-object-from-data-panel-options';
+import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
+
 
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
 
-  constructor(client: ReturnType<typeof makeNodeApolloClient>) {
+  constructor(client: ReturnType<typeof makeNodeApolloClient> ) {
     this.client = client
   }
 
@@ -26,10 +27,10 @@ export class GpeApi {
     return frames
   }
   
-  mockGrafana = async (targets: GpeTarget[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range?: TimeRange, scopedVars: ScopedVars = {} ) => {
+  mockGrafana = async (targets: GpeTarget[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
-
+        dateTimeParse
         const variables = buildItemWithMetricsVars(target, range, scopedVars);
         const items = (await this.client.query({
           query: ItemsWithMetricsDocument,
@@ -46,5 +47,14 @@ export class GpeApi {
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
     
     return hcOptions
+  }
+
+  grafanaChart = async (key: string, dashboard: GrafanaDashboard) => {
+    const panel = dashboard.panels.find(p => p.options.key == key)
+    
+    if (panel === undefined) {
+      throw new Error(`Could not find panel in dashboard ${dashboard.title}`)
+    }
+    return await this.mockGrafana(panel.targets, panel.transformations, panel.options )
   }
 }

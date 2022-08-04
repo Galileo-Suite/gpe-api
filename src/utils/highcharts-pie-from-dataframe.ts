@@ -6,7 +6,7 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): Highcharts.
   dataframes.forEach(frame=>{
     const data = frame.fields.map(f=> {
       const y = f.values.toArray()[0]
-      const name = f.name
+      const name = f.config.displayName ?? f.name
       return {name, y}
     } )
     let seriesDef:  Highcharts.SeriesOptionsType = { type:'pie',  data }

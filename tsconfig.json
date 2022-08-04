@@ -22,5 +22,5 @@
     "typeRoots": ["lib/types"]
   },
   "exclude": ["./src/studio/**.ts*"],
-  "include": ["./src/**.ts", "src/worker.js"],
+  "include": ["./src/**.ts", "src/utils/index.ts"],
 }
