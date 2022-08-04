@@ -2,7 +2,7 @@ import defaults from 'lodash/defaults';
 
 import { ScopedVars, TimeRange } from '@grafana/data';
 
-import { getTemplateSrv } from '@grafana/runtime';
+import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
 import { GpeQuery, defaultGpeQuery } from '../types/query';
 import { unwrapOptionalTimeRange } from './unwrap-optional-time-range';
@@ -10,8 +10,11 @@ import { ItemsWithMetricsQueryVariables } from 'src/client/queries/queries';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
 
-export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars): T => {
-  const json = getTemplateSrv().replace(JSON.stringify(object), scopedVars, (v: string | string[]) => {
+export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars, templateSrv?: TemplateSrv ): T => {
+  if (!templateSrv) {
+    return object
+  }
+  const json = templateSrv.replace(JSON.stringify(object), scopedVars, (v: string | string[]) => {
     if (typeof v === 'string') {
       return v;
     }
@@ -20,10 +23,9 @@ export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars): T => {
   return JSON.parse(json) as T;
 };
 
-export const getScopedVars = ():ScopedVars => {
+export const getScopedVars = ( templateSrv: TemplateSrv,):ScopedVars => {
   const scopedVars: ScopedVars = {};
-  getTemplateSrv()
-    .getVariables()
+  templateSrv.getVariables()
     .forEach((v) => {
       scopedVars[v.name] = {
         //@ts-ignore
@@ -38,11 +40,13 @@ export const getScopedVars = ():ScopedVars => {
 export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
   range?: TimeRange,
-  scopedVars: ScopedVars = {},
+  templateSrv?: TemplateSrv,
 ): ItemsWithMetricsQueryVariables => {
   let query = defaults(dup(target), defaultGpeQuery);
-
-  query = applyGrafanaVars(query, scopedVars);
+  if (templateSrv) {
+    const scopedVars = getScopedVars(templateSrv)
+    query = applyGrafanaVars(query, scopedVars, templateSrv);
+  }
   const { epoch_start, epoch_end } = unwrapOptionalTimeRange(range);
 
   let {

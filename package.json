@@ -33,7 +33,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.5",
     "@grafana/data": "*",
-    "@grafana/runtime": "^8.5.5",
+    "@grafana/runtime": "9",
     "@lifeomic/axios-fetch": "^3.0.0",
     "apollo": "^2.34.0",
     "axios": "^0.27.2",
