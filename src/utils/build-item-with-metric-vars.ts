@@ -4,7 +4,7 @@ import { ScopedVars, TimeRange } from '@grafana/data';
 
 import { GpeQuery, defaultGpeQuery } from '../types/query';
 import { unwrapOptionalTimeRange } from './unwrap-optional-time-range';
-import { ItemsWithMetricsQueryVariables } from 'src/client/queries/queries';
+import { ItemsWithMetricsQueryVariables } from '../client/queries/queries';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
 
