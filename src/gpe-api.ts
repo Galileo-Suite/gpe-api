@@ -8,6 +8,7 @@ import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
+import { getScopedVars } from './utils';
 
 
 export class GpeApi {
@@ -30,8 +31,12 @@ export class GpeApi {
   mockGrafana = async (targets: GpeTarget[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
-        dateTimeParse
-        const variables = buildItemWithMetricsVars(target, range, scopedVars);
+        const r = {
+          epoch_start:dateTimeParse(range.from).toDate().getTime(), 
+          epoch_end: dateTimeParse(range.to).toDate().getTime()
+        }
+        
+        const variables = buildItemWithMetricsVars(target, r, scopedVars);
         const items = (await this.client.query({
           query: ItemsWithMetricsDocument,
           variables,
@@ -55,6 +60,7 @@ export class GpeApi {
     if (panel === undefined) {
       throw new Error(`Could not find panel in dashboard ${dashboard.title}`)
     }
-    return await this.mockGrafana(panel.targets, panel.transformations, panel.options )
+    const scopedVars:ScopedVars = {}
+    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, dashboard.time, scopedVars)
   }
 }

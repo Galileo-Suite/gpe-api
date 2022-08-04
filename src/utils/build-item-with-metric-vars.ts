@@ -26,12 +26,11 @@ export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars ): T => {
 
 export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
-  range?: TimeRange,
+  { epoch_start, epoch_end }: { epoch_start: number, epoch_end:number },
   scopedVars: ScopedVars = {},
 ): ItemsWithMetricsQueryVariables => {
   let query = defaults(dup(target), defaultGpeQuery);
   query = applyGrafanaVars(query, scopedVars);
-  const { epoch_start, epoch_end } = unwrapOptionalTimeRange(range);
 
   let {
     use_related_to,
