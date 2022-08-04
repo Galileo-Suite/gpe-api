@@ -10,22 +10,25 @@ import { ItemsWithMetricsQueryVariables } from 'src/client/queries/queries';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
 
-export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars, templateSrv?: TemplateSrv ): T => {
-  if (!templateSrv) {
-    return object
-  }
-  const json = templateSrv.replace(JSON.stringify(object), scopedVars, (v: string | string[]) => {
+export const applyGrafanaVars = <T>(object: T, scopedVars:ScopedVars ): T => {
+  let str = JSON.stringify(object)
+  const replacefunc = (v:string | string[]): string => {
     if (typeof v === 'string') {
       return v;
     }
     return v.join('","');
+  }
+  Object.values(scopedVars).forEach(v => {
+    const value = replacefunc(v.value)
+    str = str.replace('$'+v.text, value)
   });
-  return JSON.parse(json) as T;
+  
+  return JSON.parse(str) as T;
 };
 
-export const getScopedVars = ( templateSrv: TemplateSrv,):ScopedVars => {
+export const getScopedVars = ():ScopedVars => {
   const scopedVars: ScopedVars = {};
-  templateSrv.getVariables()
+  getTemplateSrv().getVariables()
     .forEach((v) => {
       scopedVars[v.name] = {
         //@ts-ignore
@@ -40,13 +43,10 @@ export const getScopedVars = ( templateSrv: TemplateSrv,):ScopedVars => {
 export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
   range?: TimeRange,
-  templateSrv?: TemplateSrv,
+  scopedVars: ScopedVars = {},
 ): ItemsWithMetricsQueryVariables => {
   let query = defaults(dup(target), defaultGpeQuery);
-  if (templateSrv) {
-    const scopedVars = getScopedVars(templateSrv)
-    query = applyGrafanaVars(query, scopedVars, templateSrv);
-  }
+  query = applyGrafanaVars(query, scopedVars);
   const { epoch_start, epoch_end } = unwrapOptionalTimeRange(range);
 
   let {
