@@ -5,6 +5,7 @@ import { highchartsPieFromDataFrame } from './highcharts-pie-from-dataframe'
 import {darkHighchartsTheme} from './dark-highcharts-theme'
 import Highcharts from 'highcharts'
 import { HighchartsPanelOptions, defaultHighchartsPanelOptions } from '../types'
+import { highchartsLineFromDataFrame } from './highcharts-line-from-dataframe'
 
 const disableAnimations = {
   plotOptions: {
@@ -13,22 +14,42 @@ const disableAnimations = {
     },
     line:{
       animation: {duration: 0}
-    },
-    
+    }
   }
 }
 
 export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: HighchartsPanelOptions) => {
   options = defaults(options, defaultHighchartsPanelOptions)
   const hcOptions:Highcharts.Options = {
-    series: highchartsPieFromDataFrame(data)
+    credits:{
+      enabled: false
+    },
   }
   merge(hcOptions, disableAnimations)
+  let series: Highcharts.SeriesOptionsType[]
   
   if (options.useDarkTheme) {
-    merge(hcOptions, darkHighchartsTheme, {chart:{backgroundColor:'transparent'}})
+    merge(hcOptions, darkHighchartsTheme, {   chart:{ backgroundColor: 'transparent' }})
   } 
-  merge(hcOptions, options.highchartOptions)
+  switch (options.highchartsType) {
+    case 'line':
+      merge(hcOptions, highchartsLineFromDataFrame(data), options.highchartOptions.line)
+      break;
+      case 'pie':
+      merge(hcOptions, highchartsPieFromDataFrame(data), options.highchartOptions.pie)
+      break;
+    case 'custom':
+      try {
+        const func = new Function('data', options.conversionFunction.custom)
+        merge(hcOptions, func(data), options.highchartOptions.custom)
+      } catch (e) {
+        console.log(e)
+        throw new Error('Function passed errored out!')
+      }
+      break;
+    default:
+      throw new Error(`${options.highchartsType} is not valid`)
+  }
   
   return hcOptions 
 }

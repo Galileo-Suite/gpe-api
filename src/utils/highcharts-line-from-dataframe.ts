@@ -1,7 +1,8 @@
 import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
 
-export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.SeriesOptionsType[] => {
+export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.Options => {
+  // (dataframes: DataFrame[]) => Highcharts.SeriesOptionsType[]
   let series: Highcharts.SeriesOptionsType[] = []
   dataframes.forEach(frame=>{
     const time = frame.fields.find(f=>f.type=='time')?.values.toArray()
@@ -20,5 +21,5 @@ export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.
       })
     }
   })
-  return series
+  return {series}
 }

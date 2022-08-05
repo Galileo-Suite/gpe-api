@@ -13,6 +13,7 @@ export interface GrafanaDashboard {
   time: {from:string, to:string}
 }
 
+
 export interface Panel { 
   targets: GpeTarget[],
   transformations: DataTransformerConfig[]
