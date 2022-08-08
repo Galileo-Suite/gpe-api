@@ -76,20 +76,42 @@ export const defaultHighchartsSeriesOptions:Highcharts.Options = {
   }
 }
 
+export const customCode = `
+let series = []
+data.forEach(frame=>{
+  const time = frame.fields.find(f=>f.type=='time')?.values.toArray()
+  if (time) {
+    frame.fields.map(f => {
+      if( f.type !== 'number') {
+        return;
+      }
+      let data = []
+      f.values.toArray().forEach((d,i)=> {
+        data.push([time[i],d])
+      })
+      let seriesDef = { type:'line', data, name: f.config.displayName ?? \`\${frame.name} \${f.name}\`}
+      
+      series.push(seriesDef)
+    })
+  }
+})
+return {series}
+`
+
 export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   key: '',
   highchartsType: 'line',
   highchartOptions: {
     pie: defaultHighchartsPieOptions,
     line: defaultHighchartsSeriesOptions,
-    custom: {},
+    custom: defaultHighchartsSeriesOptions,
   },
   conversionFunction: {
     // pie: highchartsPieFromDataFrame.toString(),
     // line: highchartsLineFromDataFrame.toString(),
     pie: '',
     line: '',
-    custom: ``,
+    custom: customCode,
   },
   useDarkTheme: false,
   usePanelDimensions: false,

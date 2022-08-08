@@ -26,7 +26,6 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
     },
   }
   merge(hcOptions, disableAnimations)
-  let series: Highcharts.SeriesOptionsType[]
   
   if (options.useDarkTheme) {
     merge(hcOptions, darkHighchartsTheme, {   chart:{ backgroundColor: 'transparent' }})
