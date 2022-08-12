@@ -32,8 +32,8 @@ export class GpeApi {
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
         const r = {
-          epoch_start:dateTimeParse(range.from).toDate().getTime(), 
-          epoch_end: dateTimeParse(range.to).toDate().getTime()
+          epoch_start: Math.round(dateTimeParse(range.from).toDate().getTime()/1000), 
+          epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
         }
         
         const variables = buildItemWithMetricsVars(target, r, scopedVars);

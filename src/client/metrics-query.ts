@@ -1,6 +1,12 @@
 
-import { Item, Metric, Config } from './queries/queries'
+import { Item, Metric, Config, ItemsWithMetricsDocument } from './queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
+
+import {ResultOf} from '@graphql-typed-document-node/core'
+
+
+type SmallItems = ResultOf<typeof ItemsWithMetricsDocument>['items']
+type Unarray<T> = T extends Array<infer U> ? U : T;
 
 const itemToMetricFields = (metrics: Metric[], l = 1): FieldDTO<number | null>[] => {
   if (metrics.length == 0 ) {
@@ -36,7 +42,7 @@ const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[]
   })
 }
 
-const itemToIDField = (item: Item, l = 1): FieldDTO<string>[] => {
+const itemToIDField = (item: Unarray<SmallItems>, l = 1): FieldDTO<string>[] => {
   return [{
     name: "item_id",
     values: new Array(l).fill(item.id),
@@ -56,7 +62,7 @@ const itemToTimeField = (data: Metric[] | Config[], l = 1): FieldDTO<any>[]  => 
   return [time]
 }
 
-export const metricsQuery = (items: Item[] | null | undefined): MutableDataFrame<any>[]  => {
+export const metricsQuery = (items: SmallItems | null | undefined): MutableDataFrame<any>[]  => {
 
   if (!items) return [new MutableDataFrame({fields:[]})]
 

@@ -1,4 +1,3 @@
-# CfgVmHostTotalGuests
 query ItemsWithMetrics(
   $epoch_start: Int!, 
   $epoch_end: Int!, 
@@ -35,18 +34,18 @@ query ItemsWithMetrics(
 }
 
 fragment Configs on Item {
-    configs (
-        epoch_end: $epoch_end
-        epoch_start: $epoch_start
-        fields: $configs
-        summary: $summary
-        samples: $samples
-    ) {
-        start_epoch
-        summary 
-        field
-        data
-    }
+  configs (
+    epoch_end: $epoch_end
+    epoch_start: $epoch_start
+    fields: $configs
+    summary: $summary
+    samples: $samples
+  ) {
+    start_epoch
+    summary 
+    field
+    data
+  }
 }
 
 fragment Metrics on Item {
@@ -61,7 +60,6 @@ fragment Metrics on Item {
     summary
     formula
     data
-    function
     __typename
   }
   __typename
