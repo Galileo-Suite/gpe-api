@@ -65,7 +65,7 @@ export const buildItemWithMetricsVars = (
     // empty
     configs: [],
     formulas: [],
-    summary: 300,
+    summary: null,
     samples: null,
 
     // empty
@@ -89,10 +89,6 @@ export const buildItemWithMetricsVars = (
     };
   }
   
-  if (vars.samples) {
-    vars.summary = null;
-  }
-  
   if (request_type === 'metrics') {
     vars = {
       ...vars,
@@ -109,6 +105,10 @@ export const buildItemWithMetricsVars = (
       transient_fields: transient_fields ?? [],
       transient_type: transient_type ?? ''
     }
+  }
+  
+  if (vars.samples) {
+    vars.summary = null;
   }
   
   return vars;
