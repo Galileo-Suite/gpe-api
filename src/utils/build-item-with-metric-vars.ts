@@ -34,6 +34,8 @@ export const buildItemWithMetricsVars = (
 
   let {
     use_related_to,
+    request_type,
+    
     types,
     tags,
     custom_tags,
@@ -47,6 +49,9 @@ export const buildItemWithMetricsVars = (
     related_to_tags,
     related_to_custom_tags,
     related_to_item_ids,
+    
+    transient_type,
+    transient_fields,
   } = query;
 
   let vars: ItemsWithMetricsQueryVariables = {
@@ -56,15 +61,22 @@ export const buildItemWithMetricsVars = (
     tags,
     custom_tags: custom_tags ?? '',
     item_ids,
-    configs: configs ?? '',
-    formulas: formulas ?? '',
-    summary,
-    samples,
+    
+    // empty
+    configs: [],
+    formulas: [],
+    summary: 300,
+    samples: null,
 
+    // empty
     related_to_types: [],
     related_to_tags: [],
     related_to_custom_tags: [],
     related_to_item_ids: [],
+    
+    // emptys
+    transient_fields: [],
+    transient_type: ''
   };
 
   if (use_related_to === true) {
@@ -76,9 +88,28 @@ export const buildItemWithMetricsVars = (
       related_to_item_ids,
     };
   }
-
+  
   if (vars.samples) {
     vars.summary = null;
   }
+  
+  if (request_type === 'metrics') {
+    vars = {
+      ...vars,
+      configs: configs ?? [],
+      formulas: formulas ?? [],
+      summary,
+      samples,
+    }
+  }
+  
+  if (request_type==='transient') {
+    vars = {
+      ...vars,
+      transient_fields: transient_fields ?? [],
+      transient_type: transient_type ?? ''
+    }
+  }
+  
   return vars;
 };

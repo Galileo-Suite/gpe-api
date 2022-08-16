@@ -1,5 +1,4 @@
 import Highcharts from 'highcharts'
-import * as ts from "typescript"
 
 export type SupportedHighchartsTypes = 'line' | 'pie' | 'custom'
 export type HighchartOptions = {

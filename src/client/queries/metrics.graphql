@@ -13,6 +13,8 @@ query ItemsWithMetrics(
   $formulas: [String!]!, 
   $summary: Int, 
   $samples: Int
+  $transient_type: String!,
+  $transient_fields: [String!]!
 ) {
   items(
     types: $types
@@ -29,6 +31,7 @@ query ItemsWithMetrics(
     label
     ...Configs
     ...Metrics
+    ...Transient
     __typename
   }
 }
@@ -60,6 +63,20 @@ fragment Metrics on Item {
     summary
     formula
     data
+    __typename
+  }
+  __typename
+}
+
+fragment Transient on Item {
+  transient(
+    epoch_end: $epoch_end
+    epoch_start: $epoch_start
+    child_type: $transient_type
+    fields: $transient_fields
+  ) {
+    values
+    fields
     __typename
   }
   __typename

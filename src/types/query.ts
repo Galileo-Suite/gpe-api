@@ -4,6 +4,7 @@ import { DataQuery, DataSourceJsonData } from '@grafana/data';
 export interface GpeTarget {
   variable: 'types' | 'tags' | 'item_ids' | 'custom_tags' | undefined;
   use_related_to: boolean;
+  request_type: 'metrics' | 'transient'
 
   types: string[] | null;
   tags: string[];
@@ -18,6 +19,9 @@ export interface GpeTarget {
   related_to_tags: string[];
   related_to_custom_tags: string[];
   related_to_item_ids: string[];
+  
+  transient_type: string
+  transient_fields: string[]
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -25,6 +29,7 @@ export interface GpeQuery extends GpeTarget, DataQuery {}
 export const defaultGpeQuery: Partial<GpeQuery> = {
   variable: 'item_ids',
   use_related_to: false,
+  request_type: 'metrics',
 
   types: [],
   tags: [],
@@ -39,6 +44,9 @@ export const defaultGpeQuery: Partial<GpeQuery> = {
   related_to_tags: [],
   related_to_custom_tags: [],
   related_to_item_ids: [],
+  
+  transient_type: '',
+  transient_fields: [],
 };
 
 

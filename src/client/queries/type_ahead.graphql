@@ -21,6 +21,7 @@ query GetTypes(
     epoch_end: $epoch_end
   ){
     types
+    transient_types
   }
 }
 

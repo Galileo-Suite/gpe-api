@@ -160,5 +160,7 @@ export type TypeAhead = {
   formulas?: Maybe<Array<Scalars['String']>>;
   item_ids?: Maybe<Array<Scalars['ID']>>;
   tags?: Maybe<Array<Scalars['String']>>;
+  transient_fields?: Maybe<Array<Scalars['String']>>;
+  transient_types?: Maybe<Array<Scalars['String']>>;
   types?: Maybe<Array<Scalars['String']>>;
 };
