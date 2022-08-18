@@ -44,6 +44,10 @@ fragment Configs on Item {
     summary: $summary
     samples: $samples
   ) {
+    tuple {
+      value
+      epoch
+    }
     start_epoch
     summary 
     field

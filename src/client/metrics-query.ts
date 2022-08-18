@@ -44,6 +44,26 @@ const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[]
   })
 }
 
+const itemToRecentConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[] => {
+  if (configs.length == 0 ) {
+    return []
+  }
+  const fields: FieldDTO<string | null>[] = []
+  configs.forEach(m=>{
+    if ( !m.tuple ) {
+      return null;
+    }
+    const values = new Array(l).fill(m.tuple[0].value ?? null)
+    fields.push({
+      name: `${m.field}`,
+      values, 
+      type: FieldType.string, 
+      config:{custom:{summary: m.summary}}
+    })
+  })
+  return fields
+}
+
 const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1): FieldDTO<string | null>[] => {
   if (!transient || transient.length == 0 ) {
     return []
@@ -85,11 +105,11 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
   if (items[0].transient && items[0].transient.length > 0) {
     const frames: MutableDataFrame<any>[] = []
     items.forEach(i=> {
-      console.log(itemToTransientFields(i.transient, 1))
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
         fields: [
           ...itemToIDField(i, i.transient?.length ?? 1),
+          ...itemToRecentConfigFields(i.configs, i.transient?.length ?? 1),
           ...itemToTransientFields(i.transient, 1)
         ]
       });

@@ -102,6 +102,7 @@ export const buildItemWithMetricsVars = (
   if (request_type==='transient') {
     vars = {
       ...vars,
+      configs: configs ?? [],
       transient_fields: transient_fields ?? [],
       transient_type: transient_type ?? ''
     }
