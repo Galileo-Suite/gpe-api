@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.5",
+    "@galileo-suite/gpe-api": "^1.2.1",
     "@grafana/data": "*",
     "@grafana/runtime": "9",
     "@lifeomic/axios-fetch": "^3.0.0",

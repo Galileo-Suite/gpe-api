@@ -1,5 +1,5 @@
 
-import { Item, Metric, Config, ItemsWithMetricsDocument } from './queries/queries'
+import { Item, Metric, Config, ItemsWithMetricsDocument, TransientRow } from './queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
@@ -37,8 +37,8 @@ const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[]
     }
     return {
       name: `${m.field}`,
-      values, 
-      type: FieldType.string, 
+      values,
+      type: FieldType.string,
       config:{custom:{summary: m.summary}}
     }
   })
@@ -56,25 +56,40 @@ const itemToRecentConfigFields = (configs: Config[], l = 1): FieldDTO<string | n
     const values = new Array(l).fill(m.tuple[0].value ?? null)
     fields.push({
       name: `${m.field}`,
-      values, 
-      type: FieldType.string, 
+      values,
+      type: FieldType.string,
       config:{custom:{summary: m.summary}}
     })
   })
   return fields
 }
 
-const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1): FieldDTO<string | null>[] => {
+const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
   if (!transient || transient.length == 0 ) {
     return []
   }
   const fields = transient[0].fields
-  return fields.map((f,i)=>{
-    const values = transient.map(t => t.values[i] )
-    return {
-      name: `${f}`,
-      values, 
-      type: FieldType.string 
+  return fields.filter(f=>f!=='poll_epoch_ns').map((f,i)=>{
+    if (f?.slice(0,3) === "Cfg") {
+      const values = transient.map(t => t.values[fields.indexOf(f)])
+      return {
+        name: `${f}`,
+        values,
+        type: FieldType.string
+      }
+    } else {
+      const values: (number|null)[] = transient.map(t => {
+        const v = t.values[fields.indexOf(f)]
+        if (v===null) {
+          return v
+        }
+        return parseFloat(v)
+      })
+      return {
+        name: `${f}`,
+        values,
+        type: FieldType.number
+      }
     }
   })
 }
@@ -87,27 +102,40 @@ const itemToIDField = (item: Unarray<SmallItems>, l = 1): FieldDTO<string>[] => 
   }]
 }
 
-const itemToTimeField = (data: Metric[] | Config[], l = 1): FieldDTO<any>[]  => {
+const itemToTimeField = (data: Metric[] | Config[] | TransientRow[], l = 1): FieldDTO<any>[]  => {
   if (data.length == 0 ) {
     return []
   }
-  const m = data[0]
-  const timeValues = new Array(l).fill(null).map((_,i)=>  {
-    return  m.start_epoch*1000 + i*m.summary*1000
-  })
-  const time = { name: 'time',  values: timeValues, type: FieldType.time }
-  return [time]
+  let d = data[0]
+  if (d.__typename === 'TransientRow') {
+    const d = data as TransientRow[]
+    const timeValues = d.map(d=>d.values[1] ? parseInt(d.values[1])/1000/1000 : null)
+    const time = { name: 'time',  values: timeValues, type: FieldType.time }
+    return [time]
+  }
+
+  if (d.__typename === 'Metric' || d.__typename === 'Config') {
+    const m = d as Metric | Config
+    const timeValues = new Array(l).fill(null).map((_,i)=>  {
+      return  m.start_epoch*1000 + i*m.summary*1000
+    })
+    const time = { name: 'time',  values: timeValues, type: FieldType.time }
+    return [time]
+  }
+  return []
 }
 
 export const metricsQuery = (items: SmallItems | null | undefined): MutableDataFrame<any>[]  => {
 
-  if (!items) return [new MutableDataFrame({fields:[]})]
-  if (items[0].transient && items[0].transient.length > 0) {
+  if (!items || items.length === 0 ) return [new MutableDataFrame({fields:[]})]
+
+  if (Math.max(...items.map(i=>i.transient?.length ?? 0)) > 0) {
     const frames: MutableDataFrame<any>[] = []
     items.forEach(i=> {
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
         fields: [
+          ...itemToTimeField(i.transient ?? [], 1),
           ...itemToIDField(i, i.transient?.length ?? 1),
           ...itemToRecentConfigFields(i.configs, i.transient?.length ?? 1),
           ...itemToTransientFields(i.transient, 1)
