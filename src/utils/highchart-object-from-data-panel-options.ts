@@ -1,11 +1,14 @@
 import { DataFrame } from '@grafana/data'
 import merge from 'lodash.merge'
 import defaults from 'lodash.defaults'
-import { highchartsPieFromDataFrame } from './highcharts-pie-from-dataframe'
+import { highchartsPieFromDataFrame } from '../panel-to-highchart/pie/highcharts-pie-from-dataframe'
 import {darkHighchartsTheme} from './dark-highcharts-theme'
 import Highcharts from 'highcharts'
 import { HighchartsPanelOptions, defaultHighchartsPanelOptions } from '../types'
-import { highchartsLineFromDataFrame } from './highcharts-line-from-dataframe'
+
+import { highchartsLineFromDataFrame } from '../panel-to-highchart/line/highcharts-line-from-dataframe'
+import {highchartsLineFromPanelOptions} from '../panel-to-highchart/line/highcharts-line-from-panel-options'
+import {highchartsPieFromPanelOptions} from '../panel-to-highchart/pie/highcharts-pie-from-panel-options'
 
 const disableAnimations = {
   plotOptions: {
@@ -26,29 +29,21 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
     },
   }
   merge(hcOptions, disableAnimations)
-  
-  if (options.useDarkTheme) {
+
+  if (options.globalOptions.useDarkTheme) {
     merge(hcOptions, darkHighchartsTheme, {   chart:{ backgroundColor: 'transparent' }})
-  } 
-  switch (options.highchartsType) {
+  }
+
+  switch (options.highchartType) {
     case 'line':
-      merge(hcOptions, highchartsLineFromDataFrame(data), options.highchartOptions.line)
+      merge(hcOptions, highchartsLineFromDataFrame(data), highchartsLineFromPanelOptions(options.highchartLineOptions))
       break;
       case 'pie':
-      merge(hcOptions, highchartsPieFromDataFrame(data), options.highchartOptions.pie)
-      break;
-    case 'custom':
-      try {
-        const func = new Function('data', options.conversionFunction.custom)
-        merge(hcOptions, func(data), options.highchartOptions.custom)
-      } catch (e) {
-        console.log(e)
-        throw new Error('Function passed errored out!')
-      }
+      merge(hcOptions, highchartsPieFromDataFrame(data), highchartsPieFromPanelOptions(options.highchartPieOptions))
       break;
     default:
-      throw new Error(`${options.highchartsType} is not valid`)
+      throw new Error(`${options.highchartType} is not valid`)
   }
-  
-  return hcOptions 
+
+  return hcOptions
 }

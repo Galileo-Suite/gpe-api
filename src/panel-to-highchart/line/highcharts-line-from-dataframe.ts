@@ -1,8 +1,8 @@
 import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
 
-export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.Options => {
-  let series: Highcharts.SeriesOptionsType[] = []
+export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.SeriesLineOptions[] => {
+  let series: Highcharts.SeriesLineOptions[] = []
   dataframes.forEach(frame=>{
     const time = frame.fields.find(f=>f.type=='time')?.values.toArray()
     if (time) {
@@ -14,11 +14,11 @@ export const highchartsLineFromDataFrame = (dataframes: DataFrame[]):Highcharts.
         f.values.toArray().forEach((d:number,i)=> {
           data.push([time[i],d])
         })
-        let seriesDef: Highcharts.SeriesOptionsType = { type:'line', data, name: f.config.displayName ?? `${frame.name} ${f.name}` }
-        
+        let seriesDef: Highcharts.SeriesLineOptions = { type:'line', data, name: f.config.displayName ?? `${frame.name} ${f.name}` }
+
         series.push(seriesDef)
       })
     }
   })
-  return {series}
+  return series
 }

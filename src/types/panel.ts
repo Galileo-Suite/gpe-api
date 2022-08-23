@@ -7,14 +7,29 @@ export type HighchartOptions = {
 export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
 }
+export type HighchartsPanelGlobalOptions = {
+  enabled: Boolean
+  useDarkTheme?: boolean
+  usePanelDimensions?: boolean
+}
+export type HighchartLineOptions = {
+  enabled: Boolean
+}
+export type HighchartsPieOptions = {
+  enabled: Boolean
+}
+export type HighchartsBarOptions = {
+  enabled: Boolean
+}
 
 export interface HighchartsPanelOptions {
   key: string,
-  highchartsType: SupportedHighchartsTypes,
-  highchartOptions: HighchartOptions
-  conversionFunction: ConversionFunctions
-  useDarkTheme?: boolean
-  usePanelDimensions?: boolean
+  highchartType: SupportedHighchartsTypes,
+  globalOptions: HighchartsPanelGlobalOptions
+  highchartPieOptions: HighchartLineOptions
+  highchartLineOptions: HighchartsPieOptions
+  highchartBarOptions: HighchartsBarOptions
+  highchartJsonOverride: Highcharts.Options
 }
 
 export const defaultHighchartsPieOptions:Highcharts.Options = {
@@ -89,7 +104,7 @@ data.forEach(frame=>{
         data.push([time[i],d])
       })
       let seriesDef = { type:'line', data, name: f.config.displayName ?? \`\${frame.name} \${f.name}\`}
-      
+
       series.push(seriesDef)
     })
   }
@@ -99,19 +114,22 @@ return {series}
 
 export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   key: '',
-  highchartsType: 'line',
-  highchartOptions: {
-    pie: defaultHighchartsPieOptions,
-    line: defaultHighchartsSeriesOptions,
-    custom: defaultHighchartsSeriesOptions,
+  highchartType: 'line',
+  globalOptions: {
+    enabled: true,
+    useDarkTheme: false,
+    usePanelDimensions: false,
   },
-  conversionFunction: {
-    // pie: highchartsPieFromDataFrame.toString(),
-    // line: highchartsLineFromDataFrame.toString(),
-    pie: '',
-    line: '',
-    custom: customCode,
+  highchartPieOptions: {
+    enabled:true
   },
-  useDarkTheme: false,
-  usePanelDimensions: false,
+  highchartLineOptions: {
+    enabled:true
+  },
+  highchartBarOptions: {
+    enabled:true
+  },
+  highchartJsonOverride: {
+
+  }
 };
