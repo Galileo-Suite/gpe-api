@@ -32,8 +32,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.5",
-    "@galileo-suite/gpe-api": "^1.2.1",
+    "@apollo/client": "^3.6.9",
     "@grafana/data": "9",
     "@grafana/runtime": "9",
     "axios": "^0.27.2",
