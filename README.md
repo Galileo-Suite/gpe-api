@@ -1,4 +1,4 @@
-# incase of schema changes
+# Incase of schema changes
 
 
 run this commmand and commit the updated codegen
