@@ -1,6 +1,4 @@
 export * from './highchart-object-from-data-panel-options'
-export * from '../panel-to-highchart/line/highcharts-line-from-dataframe'
-export * from '../panel-to-highchart/pie/highcharts-pie-from-dataframe'
 export * from './dark-highcharts-theme'
 export * from './build-item-with-metric-vars'
 export * from './execute-transforms'

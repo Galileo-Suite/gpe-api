@@ -1,24 +1,15 @@
 import { DataFrame } from '@grafana/data'
 import merge from 'lodash.merge'
 import defaults from 'lodash.defaults'
-import { highchartsPieFromDataFrame } from '../panel-to-highchart/pie/highcharts-pie-from-dataframe'
 import {darkHighchartsTheme} from './dark-highcharts-theme'
 import Highcharts from 'highcharts'
 import { HighchartsPanelOptions, defaultHighchartsPanelOptions } from '../types'
 
-import { highchartsLineFromDataFrame } from '../panel-to-highchart/line/highcharts-line-from-dataframe'
 import {highchartsLineFromPanelOptions} from '../panel-to-highchart/line/highcharts-line-from-panel-options'
 import {highchartsPieFromPanelOptions} from '../panel-to-highchart/pie/highcharts-pie-from-panel-options'
 
-const disableAnimations = {
-  plotOptions: {
-    pie:{
-      animation: {duration: 0}
-    },
-    line:{
-      animation: {duration: 0}
-    }
-  }
+const defaultPlotOptions = {
+  animation: {duration: 0}
 }
 
 export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: HighchartsPanelOptions) => {
@@ -27,8 +18,12 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
     credits:{
       enabled: false
     },
+    chart:{
+      options3d:{
+        enabled: true
+      }
+    },
   }
-  merge(hcOptions, disableAnimations)
 
   if (options.globalOptions.useDarkTheme) {
     merge(hcOptions, darkHighchartsTheme, {   chart:{ backgroundColor: 'transparent' }})
@@ -36,14 +31,16 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
 
   switch (options.highchartType) {
     case 'line':
-      merge(hcOptions, highchartsLineFromDataFrame(data), highchartsLineFromPanelOptions(options.highchartLineOptions))
+      merge(hcOptions, {plotOptions:{line: defaultPlotOptions}}, highchartsLineFromPanelOptions(options.highchartLineOptions, data))
       break;
       case 'pie':
-      merge(hcOptions, highchartsPieFromDataFrame(data), highchartsPieFromPanelOptions(options.highchartPieOptions))
+      merge(hcOptions, {plotOptions:{pie: defaultPlotOptions}}, highchartsPieFromPanelOptions(options.highchartPieOptions, data))
       break;
     default:
       throw new Error(`${options.highchartType} is not valid`)
   }
+
+  merge(hcOptions, options.HighchartJsonOverrideOptions.hcOptions)
 
   return hcOptions
 }

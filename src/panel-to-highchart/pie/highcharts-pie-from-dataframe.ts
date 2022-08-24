@@ -1,16 +1,25 @@
 import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
 
-export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): Highcharts.Options => {
-  let series:  Highcharts.SeriesOptionsType[] = []
+
+interface data extends Highcharts.PointOptionsObject {
+  name:string
+}
+interface simplePieSeriesOption {
+  type: 'pie',
+  data: data[]
+}
+
+export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSeriesOption[] => {
+  let series:  simplePieSeriesOption[] = []
   dataframes.forEach(frame=>{
     const data = frame.fields.map(f=> {
-      const y = f.values.toArray()[0]
+      const y:number = f.values.toArray()[0]
       const name = f.config.displayName ?? f.name
       return {name, y}
     } )
-    let seriesDef:  Highcharts.SeriesOptionsType = { type:'pie',  data }
+    let seriesDef:  simplePieSeriesOption = { type:'pie',  data }
     series.push(seriesDef)
   })
-  return {series}
+  return series
 }

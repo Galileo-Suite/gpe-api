@@ -1,8 +1,52 @@
 import { HighchartsPanelOptions } from '../../types'
 import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
+import { highchartsPieFromDataFrame } from './highcharts-pie-from-dataframe';
 
-export const highchartsPieFromPanelOptions = (options: HighchartsPanelOptions['highchartPieOptions']): Highcharts.Options => {
+export const highchartsPieFromPanelOptions = (highchartPieOptions: HighchartsPanelOptions['highchartPieOptions'], dataframes: DataFrame[]): Highcharts.Options => {
+  if (highchartPieOptions.enabled === false) {
+    return {series: highchartsPieFromDataFrame(dataframes)};
+  }
+  const hcOptions: Highcharts.Options = {
+    chart:{
+     options3d:{}
+    },
+    plotOptions:{
+      pie: {
 
-  return {}
+      },
+    }
+  }
+  if (!(hcOptions.plotOptions?.pie && hcOptions.chart?.options3d)) {
+    return hcOptions
+  }
+
+  hcOptions.plotOptions.pie.depth = highchartPieOptions.depth3d
+  hcOptions.plotOptions.pie.innerSize = `${highchartPieOptions.innerSize}%`
+  hcOptions.plotOptions.pie.startAngle = highchartPieOptions.startAngle
+  hcOptions.plotOptions.pie.endAngle = highchartPieOptions.endAngle
+  hcOptions.chart.options3d.alpha = highchartPieOptions.alpha3d
+  hcOptions.chart.options3d.beta = highchartPieOptions.beta3d
+  hcOptions.plotOptions.pie.slicedOffset = highchartPieOptions.slicedOffset
+
+  const series = highchartsPieFromDataFrame(dataframes)
+  let selected:string[] = []
+  if (highchartPieOptions.slicedOptions == 'all') {
+    series.forEach(s=>s.data.forEach(d=>selected.push(d.name)))
+  } else if (highchartPieOptions.slicedOptions === 'selected') {
+    selected = highchartPieOptions.multiSlice ?? []
+  }
+
+  series.forEach(s => {
+    s.data?.forEach(d => {
+      if (selected.includes(d.name)) {
+        d.sliced = true
+      }
+    })
+  })
+
+
+  hcOptions.series = series
+
+  return hcOptions
 }

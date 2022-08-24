@@ -17,19 +17,32 @@ export type HighchartLineOptions = {
 }
 export type HighchartsPieOptions = {
   enabled: Boolean
+  slicedOptions?: 'none' | 'all' | 'selected'
+  slicedOffset?: number
+  alpha3d?: number
+  beta3d?: number
+  depth3d?: number
+  innerSize: number
+  startAngle: number
+  endAngle?: number
+  multiSlice?: Array<string>
 }
 export type HighchartsBarOptions = {
   enabled: Boolean
+}
+export type HighchartJsonOverrideOptions = {
+  enabled: Boolean
+  hcOptions: Highcharts.Options
 }
 
 export interface HighchartsPanelOptions {
   key: string,
   highchartType: SupportedHighchartsTypes,
   globalOptions: HighchartsPanelGlobalOptions
-  highchartPieOptions: HighchartLineOptions
-  highchartLineOptions: HighchartsPieOptions
+  highchartLineOptions: HighchartLineOptions
+  highchartPieOptions: HighchartsPieOptions
   highchartBarOptions: HighchartsBarOptions
-  highchartJsonOverride: Highcharts.Options
+  HighchartJsonOverrideOptions: HighchartJsonOverrideOptions
 }
 
 export const defaultHighchartsPieOptions:Highcharts.Options = {
@@ -121,15 +134,31 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
     usePanelDimensions: false,
   },
   highchartPieOptions: {
-    enabled:true
+    enabled:true,
+    slicedOptions: 'none',
+    slicedOffset: 10,
+    alpha3d: 45,
+    beta3d: 0,
+    depth3d: 35,
+    innerSize: 0,
+    startAngle: 0,
+    endAngle: undefined,
+    multiSlice: []
   },
   highchartLineOptions: {
-    enabled:true
+    enabled:true,
   },
   highchartBarOptions: {
     enabled:true
   },
-  highchartJsonOverride: {
-
+  HighchartJsonOverrideOptions: {
+    enabled:true,
+    hcOptions: {
+      "chart": {},
+      "plotOptions": {
+        "series": {}
+      },
+      "series": []
+    }
   }
 };
