@@ -25,7 +25,6 @@ export const makeApolloClient = ({url, token}:makeApolloClientOptions): ApolloCl
       method:'post',
       data: options.body
     })
-    console.log(res)
     const ret = new Response(JSON.stringify(res.data))
     return ret
   }
