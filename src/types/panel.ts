@@ -14,8 +14,9 @@ export type HighchartsPanelGlobalOptions = {
 }
 export type HighchartLineOptions = {
   enabled: Boolean,
+  area: Boolean,
   pointType: "line" | "point" | "column",
-  stacking: "unstacked" | "normal" | "percent"
+  stacking: "unstacked" | "normal" | "percent",
 }
 export type HighchartsPieOptions = {
   enabled: Boolean

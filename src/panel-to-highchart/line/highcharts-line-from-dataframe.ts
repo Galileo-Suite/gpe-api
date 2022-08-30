@@ -3,7 +3,7 @@ import Highcharts from 'highcharts'
 import { getFieldDisplayName } from '@grafana/data';
 
 
-type lineOptions = (Highcharts.SeriesLineOptions | Highcharts.SeriesBarOptions | Highcharts.SeriesColumnOptions)
+type lineOptions = (Highcharts.SeriesLineOptions | Highcharts.SeriesBarOptions | Highcharts.SeriesColumnOptions | Highcharts.SeriesAreaOptions)
 export const highchartsLineFromDataFrame = (dataframes: DataFrame[]): lineOptions[] => {
   let series: lineOptions[] = []
   dataframes.forEach(frame=>{

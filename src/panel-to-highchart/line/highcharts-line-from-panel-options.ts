@@ -1,5 +1,5 @@
 import { HighchartsBarOptions, HighchartsPanelOptions } from '../../types'
-import Highcharts from 'highcharts'
+import Highcharts, { chart } from 'highcharts'
 import { DataFrame } from '@grafana/data'
 import { highchartsLineFromDataFrame } from './highcharts-line-from-dataframe'
 import merge from 'lodash.merge'
@@ -41,12 +41,21 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
     })
   })
 
+  if (panelOptions.area && panelOptions.pointType !== 'column') {
+    series.forEach(s => {
+      s.type = 'area'
+    })
+  }
+
   merge(hcOptions, {
     plotOptions: {
       line: {
         stacking: panelOptions.stacking
       },
       column: {
+        stacking: panelOptions.stacking
+      },
+      area: {
         stacking: panelOptions.stacking
       }
     }
