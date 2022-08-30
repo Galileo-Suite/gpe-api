@@ -13,7 +13,7 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
   const hcOptions: Highcharts.Options = {}
 
   const series = highchartsLineFromDataFrame(dataframes)
-  hcOptions.series = series
+  hcOptions.series = series as Highcharts.SeriesOptionsType[]
 
   merge(hcOptions, {
     series: series.map(s => {
@@ -22,12 +22,10 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
         s.marker = {
           ...s.marker
         }
-        s.type = "line",
         s.lineWidth = 0,
         s.marker.enabled = true,
         s.marker.radius = 2
       } else if (panelOptions.pointType === 'column') {
-        s.type = panelOptions.pointType
       } else if (panelOptions.pointType === 'line') {
         s = s as Highcharts.SeriesLineOptions
         s.marker = {
@@ -49,11 +47,11 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
     })
   })
 
-  if (panelOptions.area && panelOptions.pointType !== 'column') {
-    series.forEach(s => {
-      s.type = 'area'
-    })
-  }
+  // if (panelOptions.area && panelOptions.pointType !== 'column') {
+  //   series.forEach(s => {
+  //     s.type = 'area'
+  //   })
+  // }
 
   merge(hcOptions, {
     plotOptions: {

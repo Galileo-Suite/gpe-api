@@ -2,8 +2,8 @@ import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
 import { getFieldDisplayName } from '@grafana/data';
 
-
-type lineOptions = Omit<(Highcharts.SeriesLineOptions | Highcharts.SeriesBarOptions | Highcharts.SeriesColumnOptions | Highcharts.SeriesAreaOptions | Highcharts.SeriesSplineOptions), 'type'> & {type?:string}
+type OmitType<T> = Omit<T, 'type'>
+type lineOptions = OmitType<Highcharts.SeriesLineOptions> | OmitType<Highcharts.SeriesBarOptions> | OmitType<Highcharts.SeriesColumnOptions> | OmitType<Highcharts.SeriesAreaOptions> & {type?:string}
 export const highchartsLineFromDataFrame = (dataframes: DataFrame[]): lineOptions[] => {
   let series: lineOptions[] = []
   dataframes.forEach(frame=>{
