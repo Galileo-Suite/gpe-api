@@ -34,7 +34,15 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
           ...s.marker
         }
         s.type = "line",
-        s.lineWidth = 1,
+        s.lineWidth = 2,
+        s.marker.enabled = false
+      } else if (panelOptions.pointType === 'spline') {
+        s = s as Highcharts.SeriesLineOptions
+        s.marker = {
+          ...s.marker
+        }
+        s.type = "spline",
+        s.lineWidth = 2,
         s.marker.enabled = false
       }
       return s
@@ -56,6 +64,9 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
         stacking: panelOptions.stacking
       },
       area: {
+        stacking: panelOptions.stacking
+      },
+      spline: {
         stacking: panelOptions.stacking
       }
     }

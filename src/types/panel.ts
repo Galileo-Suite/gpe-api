@@ -15,7 +15,7 @@ export type HighchartsPanelGlobalOptions = {
 export type HighchartLineOptions = {
   enabled: Boolean,
   area: Boolean,
-  pointType: "line" | "point" | "column",
+  pointType: "line" | "spline" | "point" | "column"
   stacking: "unstacked" | "normal" | "percent",
 }
 export type HighchartsPieOptions = {
@@ -151,6 +151,8 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   highchartLineOptions: {
     enabled:true,
     pointType: 'line',
+    area: false,
+    stacking: 'unstacked'
   },
   highchartBarOptions: {
     enabled:true

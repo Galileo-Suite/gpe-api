@@ -31,7 +31,7 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
 
   switch (options.highchartType) {
     case 'line':
-      merge(hcOptions, {plotOptions:{line: defaultPlotOptions, column: defaultPlotOptions, area: defaultPlotOptions}}, highchartsLineFromPanelOptions(options.highchartLineOptions, data))
+      merge(hcOptions, {plotOptions:{line: defaultPlotOptions, column: defaultPlotOptions, area: defaultPlotOptions, spline: defaultPlotOptions}}, highchartsLineFromPanelOptions(options.highchartLineOptions, data))
       break;
       case 'pie':
       merge(hcOptions, {plotOptions:{pie: defaultPlotOptions}}, highchartsPieFromPanelOptions(options.highchartPieOptions, data))
