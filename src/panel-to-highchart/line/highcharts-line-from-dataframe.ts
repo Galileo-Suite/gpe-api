@@ -1,5 +1,6 @@
 import {DataFrame } from '@grafana/data'
 import Highcharts from 'highcharts'
+import { getFieldDisplayName } from '@grafana/data';
 
 
 type lineOptions = (Highcharts.SeriesLineOptions | Highcharts.SeriesBarOptions)
@@ -16,7 +17,7 @@ export const highchartsLineFromDataFrame = (dataframes: DataFrame[]): lineOption
         f.values.toArray().forEach((d:number,i)=> {
           data.push([time[i],d])
         })
-        let seriesDef: lineOptions = { type:'line', data, name: f.config.displayName ?? `${frame.name} ${f.name}` }
+        let seriesDef: lineOptions = { type:'line', data, name: getFieldDisplayName(f,frame, dataframes) }
 
         series.push(seriesDef)
       })
