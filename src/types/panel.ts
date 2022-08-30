@@ -1,6 +1,6 @@
 import Highcharts from 'highcharts'
 
-export type SupportedHighchartsTypes = 'line' | 'pie' | 'custom'
+export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom'
 export type HighchartOptions = {
   [key in SupportedHighchartsTypes]: Highcharts.Options
 }
@@ -13,7 +13,9 @@ export type HighchartsPanelGlobalOptions = {
   usePanelDimensions?: boolean
 }
 export type HighchartLineOptions = {
-  enabled: Boolean
+  enabled: Boolean,
+  pointType: "line" | "point" | "column",
+  stacking: "unstacked" | "normal" | "percent"
 }
 export type HighchartsPieOptions = {
   enabled: Boolean
@@ -147,6 +149,7 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   },
   highchartLineOptions: {
     enabled:true,
+    pointType: 'line',
   },
   highchartBarOptions: {
     enabled:true
