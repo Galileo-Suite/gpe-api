@@ -68,6 +68,9 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
 
 
   merge(hcOptions, {
+    xAxis: {
+      type: 'datetime'
+    },
     plotOptions: {
       series: {
         lineWidth: panelOptions.lineWidth,
