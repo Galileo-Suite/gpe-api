@@ -27,8 +27,8 @@ const getShadow = (panelOptions: HighchartsPanelOptions['highchartLineOptions'])
     return false
   }
   return {
-      offsetX: (panelOptions.shadowIntensity)*.35, 
-      offsetY: (panelOptions.shadowIntensity)*.35, 
+      offsetX: (panelOptions.shadowIntensity)*.35,
+      offsetY: (panelOptions.shadowIntensity)*.35,
       opacity: 1/(panelOptions.shadowIntensity),
       width: (panelOptions.shadowIntensity)*1.5
   }
@@ -39,8 +39,8 @@ const getColumnOps = (panelOptions: HighchartsPanelOptions['highchartLineOptions
     return
   }
   return {
-      borderRadius: panelOptions.borderRadius, 
-      borderWidth: panelOptions.borderWidth, 
+      borderRadius: panelOptions.borderRadius,
+      borderWidth: panelOptions.borderWidth,
       groupPadding: panelOptions.groupPadding,
       pointPadding: panelOptions.pointPadding
   }
@@ -51,15 +51,16 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
     return {};
   }
 
-  const hcOptions: Highcharts.Options = {}
+  const hcOptions: Highcharts.Options = {
+    xAxis: {
+      type: 'datetime'
+    }
+  }
 
   const series = highchartsLineFromDataFrame(dataframes)
   hcOptions.series = series as Highcharts.SeriesOptionsType[]
 
   hcOptions.chart = {...hcOptions.chart}
-
-
-
   hcOptions.chart.type = getChartType(panelOptions)
 
   const marker = {
@@ -68,9 +69,6 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
 
 
   merge(hcOptions, {
-    xAxis: {
-      type: 'datetime'
-    },
     plotOptions: {
       series: {
         lineWidth: panelOptions.lineWidth,
@@ -110,7 +108,7 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
   })
 
   console.log(hcOptions)
-  
+
   merge(hcOptions.series, series)
 
   return hcOptions
