@@ -102,8 +102,6 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
     }
   })
 
-  console.log(hcOptions)
-
   merge(hcOptions.series, series)
 
   return hcOptions
