@@ -31,7 +31,7 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
     },
     chart:{
       options3d:{
-        enabled: true
+        enabled: false
       }
     },
   }
