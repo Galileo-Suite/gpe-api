@@ -6,6 +6,7 @@ import {
   HttpLink
 } from "@apollo/client/core";
 import axios from 'axios'
+import { RequestInfo, RequestInit, Response } from 'node-fetch';
 
 
 interface makeApolloClientOptions {
