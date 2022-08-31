@@ -63,11 +63,6 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
   hcOptions.chart = {...hcOptions.chart}
   hcOptions.chart.type = getChartType(panelOptions)
 
-  const marker = {
-    enabled: panelOptions.marker,
-  }
-
-
   merge(hcOptions, {
     plotOptions: {
       series: {
