@@ -1,9 +1,50 @@
-import { HighchartsBarOptions, HighchartsPanelOptions } from '../../types'
+import { HighchartOptions, HighchartsBarOptions, HighchartsPanelOptions } from '../../types'
 import Highcharts, { chart } from 'highcharts'
 import { DataFrame } from '@grafana/data'
 import { highchartsLineFromDataFrame } from './highcharts-line-from-dataframe'
 import merge from 'lodash.merge'
 import { OptionsUIRegistryBuilder } from '@grafana/data/types/OptionsUIRegistryBuilder'
+
+const getChartType = (panelOptions: HighchartsPanelOptions['highchartLineOptions']) => {
+  if (panelOptions.pointType === 'column') {
+    return 'column'
+  }
+  if (panelOptions.area && panelOptions.pointType === 'spline') {
+    return 'areaspline'
+  }
+  if (panelOptions.pointType === 'spline') {
+    return 'spline'
+  }
+  if (panelOptions.area) {
+    return 'area'
+  }
+  return panelOptions.pointType
+}
+
+const getShadow = (panelOptions: HighchartsPanelOptions['highchartLineOptions']) => {
+  // if (!panelOptions.shadow || panelOptions.pointType === 'column') {
+  if (!panelOptions.shadow) {
+    return false
+  }
+  return {
+      offsetX: (panelOptions.shadowIntensity)*.35, 
+      offsetY: (panelOptions.shadowIntensity)*.35, 
+      opacity: 1/(panelOptions.shadowIntensity),
+      width: (panelOptions.shadowIntensity)*1.5
+  }
+}
+
+const getColumnOps = (panelOptions: HighchartsPanelOptions['highchartLineOptions']) => {
+  if (panelOptions.pointType !== 'column') {
+    return
+  }
+  return {
+      borderRadius: panelOptions.borderRadius, 
+      borderWidth: panelOptions.borderWidth, 
+      groupPadding: panelOptions.groupPadding,
+      pointPadding: panelOptions.pointPadding
+  }
+}
 
 export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOptions['highchartLineOptions'], dataframes: DataFrame[]): Highcharts.Options => {
   if (panelOptions.enabled === false) {
@@ -15,46 +56,27 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
   const series = highchartsLineFromDataFrame(dataframes)
   hcOptions.series = series as Highcharts.SeriesOptionsType[]
 
-  merge(hcOptions, {
-    series: series.map(s => {
-      if (panelOptions.pointType === 'point') {
-        s = s as Highcharts.SeriesLineOptions
-        s.marker = {
-          ...s.marker
-        }
-        s.lineWidth = 0,
-        s.marker.enabled = true,
-        s.marker.radius = 2
-      } else if (panelOptions.pointType === 'column') {
-      } else if (panelOptions.pointType === 'line') {
-        s = s as Highcharts.SeriesLineOptions
-        s.marker = {
-          ...s.marker
-        }
-        s.type = "line",
-        s.lineWidth = 2,
-        s.marker.enabled = false
-      } else if (panelOptions.pointType === 'spline') {
-        s = s as Highcharts.SeriesLineOptions
-        s.marker = {
-          ...s.marker
-        }
-        s.type = "spline",
-        s.lineWidth = 2,
-        s.marker.enabled = false
-      }
-      return s
-    })
-  })
+  hcOptions.chart = {...hcOptions.chart}
 
-  // if (panelOptions.area && panelOptions.pointType !== 'column') {
-  //   series.forEach(s => {
-  //     s.type = 'area'
-  //   })
-  // }
+
+
+  hcOptions.chart.type = getChartType(panelOptions)
+
+  const marker = {
+    enabled: panelOptions.marker,
+  }
+
 
   merge(hcOptions, {
     plotOptions: {
+      series: {
+        lineWidth: panelOptions.lineWidth,
+        marker: {
+          enabled: panelOptions.marker
+        },
+        shadow: getShadow(panelOptions),
+        ...getColumnOps(panelOptions)
+      },
       line: {
         stacking: panelOptions.stacking
       },
@@ -62,15 +84,31 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
         stacking: panelOptions.stacking
       },
       area: {
-        stacking: panelOptions.stacking
+        stacking: panelOptions.stacking,
+        fillOpacity: panelOptions.opacity
       },
       spline: {
         stacking: panelOptions.stacking
+      },
+      areaspline: {
+        stacking: panelOptions.stacking,
+        fillOpacity: panelOptions.opacity
       }
     }
   })
 
-  console.log(panelOptions)
+  const selected = panelOptions.selectedSeries
+
+  series.forEach(s => {
+    console.log(s)
+    if (selected === s.name) {
+      s = merge(s, {...panelOptions.seriesOptions})
+    }
+  })
+
+  console.log(hcOptions)
+  
+  merge(hcOptions.series, series)
 
   return hcOptions
 }

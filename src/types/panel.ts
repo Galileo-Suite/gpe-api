@@ -15,8 +15,19 @@ export type HighchartsPanelGlobalOptions = {
 export type HighchartLineOptions = {
   enabled: Boolean,
   area: Boolean,
-  pointType: "line" | "spline" | "point" | "column"
+  lineWidth: number,
+  opacity: number,
+  marker: Boolean,
+  shadow: Boolean,
+  shadowIntensity: number,
+  selectedSeries?: Array<string>,
+  seriesOptions?: Highcharts.Options,
+  pointType: "line" | "spline" | "column"
   stacking: "unstacked" | "normal" | "percent",
+  borderRadius: number,
+  borderWidth: number,
+  groupPadding: number,
+  pointPadding: number,
 }
 export type HighchartsPieOptions = {
   enabled: Boolean
@@ -151,8 +162,19 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   highchartLineOptions: {
     enabled:true,
     pointType: 'line',
+    lineWidth: 2,
+    opacity: 0,
     area: false,
-    stacking: 'unstacked'
+    marker: false,
+    shadow: false,
+    selectedSeries: [],
+    seriesOptions: {},
+    shadowIntensity: 0,
+    stacking: 'unstacked',
+    borderRadius: 0,
+    borderWidth: 0,
+    groupPadding: 0.2,
+    pointPadding: 0.1
   },
   highchartBarOptions: {
     enabled:true
