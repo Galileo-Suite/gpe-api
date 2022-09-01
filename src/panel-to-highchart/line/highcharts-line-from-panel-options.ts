@@ -68,7 +68,9 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
       series: {
         lineWidth: panelOptions.lineWidth,
         marker: {
-          enabled: panelOptions.marker
+          enabled: panelOptions.marker,
+          radius: panelOptions.markerRadius,
+          symbol: 'circle'
         },
         shadow: getShadow(panelOptions),
         ...getColumnOps(panelOptions)
