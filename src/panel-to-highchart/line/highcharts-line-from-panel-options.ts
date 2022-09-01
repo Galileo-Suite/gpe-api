@@ -79,7 +79,8 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
         stacking: panelOptions.stacking
       },
       column: {
-        stacking: panelOptions.stacking
+        stacking: panelOptions.stacking,
+        opacity: panelOptions.opacity
       },
       area: {
         stacking: panelOptions.stacking,
