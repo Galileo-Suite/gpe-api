@@ -6,7 +6,7 @@ export interface GpeTarget {
   use_related_to: boolean;
   request_type: 'metrics' | 'transient'
 
-  types: string[] | null;
+  types: string[];
   tags: string[];
   custom_tags: string[];
   item_ids: string[];
@@ -15,11 +15,11 @@ export interface GpeTarget {
   summary: number | null;
   samples: number | null;
 
-  related_to_types: string[] | null;
+  related_to_types: string[];
   related_to_tags: string[];
   related_to_custom_tags: string[];
   related_to_item_ids: string[];
-  
+
   transient_type: string
   transient_fields: string[]
 }
@@ -44,7 +44,7 @@ export const defaultGpeQuery: Partial<GpeQuery> = {
   related_to_tags: [],
   related_to_custom_tags: [],
   related_to_item_ids: [],
-  
+
   transient_type: '',
   transient_fields: [],
 };

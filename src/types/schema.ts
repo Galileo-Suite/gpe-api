@@ -109,6 +109,13 @@ export type Metric = {
 
 export type Query = {
   __typename?: 'Query';
+  /**
+   * this is code
+   * ```sdfsdf```
+   * sdf
+   * sdf
+   * sdfsd
+   */
   items: Array<Item>;
   type_ahead: TypeAhead;
 };
@@ -116,8 +123,8 @@ export type Query = {
 
 export type QueryItemsArgs = {
   custom_tags?: InputMaybe<Array<Scalars['String']>>;
-  epoch_end: Scalars['Int'];
-  epoch_start: Scalars['Int'];
+  epoch_end?: InputMaybe<Scalars['Int']>;
+  epoch_start?: InputMaybe<Scalars['Int']>;
   item_ids?: InputMaybe<Array<Scalars['ID']>>;
   related_to?: InputMaybe<Array<Selector>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -127,8 +134,8 @@ export type QueryItemsArgs = {
 
 export type QueryType_AheadArgs = {
   custom_tags?: InputMaybe<Array<Scalars['String']>>;
-  epoch_end: Scalars['Int'];
-  epoch_start: Scalars['Int'];
+  epoch_end?: InputMaybe<Scalars['Int']>;
+  epoch_start?: InputMaybe<Scalars['Int']>;
   item_ids?: InputMaybe<Array<Scalars['ID']>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   types?: InputMaybe<Array<Scalars['String']>>;
