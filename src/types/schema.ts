@@ -150,6 +150,7 @@ export type StringTuple = {
 export type TransientRow = {
   __typename?: 'TransientRow';
   fields: Array<Maybe<Scalars['String']>>;
+  type?: Maybe<Scalars['String']>;
   values: Array<Maybe<Scalars['String']>>;
 };
 

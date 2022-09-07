@@ -8,7 +8,7 @@ import {ResultOf} from '@graphql-typed-document-node/core'
 type SmallItems = ResultOf<typeof ItemsWithMetricsDocument>['items']
 type Unarray<T> = T extends Array<infer U> ? U : T;
 
-const itemToMetricFields = (metrics: Metric[], l = 1): FieldDTO<number | null>[] => {
+const itemToMetricFields = (metrics: Metric[], l = 1, prefix=""): FieldDTO<number | null>[] => {
   if (metrics.length == 0 ) {
     return []
   }
@@ -19,13 +19,13 @@ const itemToMetricFields = (metrics: Metric[], l = 1): FieldDTO<number | null>[]
       values = new Array(l).fill(null)
     }
     return {
-      name: `${m.formula}`,
+      name: `${prefix? prefix+'_' : ''}${m.formula}`,
       values, type: FieldType.number, config:{custom:{summary: m.summary}}
     }
   })
 }
 
-const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[] => {
+const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -36,7 +36,7 @@ const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[]
       values = new Array(l).fill(null)
     }
     return {
-      name: `${m.field}`,
+      name: `${prefix? prefix+ '_' : ''}${m.field}`,
       values,
       type: FieldType.string,
       config:{custom:{summary: m.summary}}
@@ -44,7 +44,7 @@ const itemToConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[]
   })
 }
 
-const itemToRecentConfigFields = (configs: Config[], l = 1): FieldDTO<string | null>[] => {
+const itemToRecentConfigFields = (configs: Config[], l = 1, prefix: string = ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -55,7 +55,7 @@ const itemToRecentConfigFields = (configs: Config[], l = 1): FieldDTO<string | n
     }
     const values = new Array(l).fill(m.tuple[0].value ?? null)
     fields.push({
-      name: `${m.field}`,
+      name: `${prefix? prefix+'_' : ''}${m.field}`,
       values,
       type: FieldType.string,
       config:{custom:{summary: m.summary}}
@@ -64,7 +64,7 @@ const itemToRecentConfigFields = (configs: Config[], l = 1): FieldDTO<string | n
   return fields
 }
 
-const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
+const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1, prefix: string = ""): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
   if (!transient || transient.length == 0 ) {
     return []
   }
@@ -73,7 +73,7 @@ const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 
     if (f?.slice(0,3) === "Cfg") {
       const values = transient.map(t => t.values[fields.indexOf(f)])
       return {
-        name: `${f}`,
+        name: `${prefix? prefix+'_' : ''}${f}`,
         values,
         type: FieldType.string
       }
@@ -149,11 +149,12 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
     items.forEach(i=> {
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
+
         fields: renameDuplicateFields([
           ...itemToTimeField(i.transient ?? [], 1),
           ...itemToIDField(i, i.transient?.length ?? 1),
-          ...itemToRecentConfigFields(i.configs, i.transient?.length ?? 1),
-          ...itemToTransientFields(i.transient, 1)
+          ...itemToRecentConfigFields(i.configs, i.transient?.length ?? 1, i.item_type),
+          ...itemToTransientFields(i.transient, 1, i.transient?.find(f=>true)?.type ?? "")
         ])
       });
       frames.push(frame)
@@ -183,8 +184,8 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
     const fields = renameDuplicateFields([
       ...itemToTimeField(metrics.length == 0 ? configs : metrics, l),
       ...itemToIDField(i, l),
-      ...itemToMetricFields(metrics, l),
-      ...itemToConfigFields(configs, l)
+      ...itemToMetricFields(metrics, l, i.item_type),
+      ...itemToConfigFields(configs, l, i.item_type)
     ])
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,
