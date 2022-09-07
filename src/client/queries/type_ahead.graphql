@@ -120,3 +120,14 @@ query GetFormulas(
     formulas
   }
 }
+
+query TypeAheadDescriptions {
+  __type(name: "TypeAhead") {
+    name
+    fields {
+      name
+      description
+    }
+  }
+}
+

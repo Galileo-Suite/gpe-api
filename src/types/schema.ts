@@ -109,13 +109,6 @@ export type Metric = {
 
 export type Query = {
   __typename?: 'Query';
-  /**
-   * this is code
-   * ```sdfsdf```
-   * sdf
-   * sdf
-   * sdfsd
-   */
   items: Array<Item>;
   type_ahead: TypeAhead;
 };
@@ -162,12 +155,35 @@ export type TransientRow = {
 
 export type TypeAhead = {
   __typename?: 'TypeAhead';
+  /** Configuration fields avilable for current selection, will be blown out and summarized to match formula field */
   config_fields?: Maybe<Array<Scalars['String']>>;
+  /** These are Tags created by you in Galileo Tag Manager - https://my.galileosuite.com/atsgroup/tagging */
   custom_tags?: Maybe<Array<Scalars['String']>>;
+  /**
+   * Formulas, tell the data base what to query, this will fill with a list of avilable column names.
+   * common sql syntax is supported. Example: Max(CpuBusyAll)
+   */
   formulas?: Maybe<Array<Scalars['String']>>;
+  /**
+   * Final level of selection, filtered by the fields selected above, specifiy what items to request here.
+   * Make sure selections are valid above or no items will be returned
+   */
   item_ids?: Maybe<Array<Scalars['ID']>>;
+  /**
+   * Internal Tags of galileo, filtered by the fields selected above. Used primally to distiguesed between
+   * items with the same type, for example AIX and WINDOWS are of type host,
+   * but they have different configs, if you want to request on only windows hosts this selector is useful
+   */
   tags?: Maybe<Array<Scalars['String']>>;
+  /** Configuration fields avilable for currently selected transient type hi levi */
   transient_fields?: Maybe<Array<Scalars['String']>>;
+  /** Similar to types as before but only for transients, which is essentally ephemeral data, generally used for proccesses */
   transient_types?: Maybe<Array<Scalars['String']>>;
+  /**
+   * Internal Types for Galileo, Generaly what should be selected
+   * first. Types control what configs and formulas are avilaible,
+   * Note: selecting more than one type is possible but can result in a strange return,
+   * Some fields return for several items but are nulled for others
+   */
   types?: Maybe<Array<Scalars['String']>>;
 };

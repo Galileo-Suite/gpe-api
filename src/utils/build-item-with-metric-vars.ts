@@ -95,7 +95,7 @@ export const buildItemWithMetricsVars = (
     vars = {
       ...vars,
       configs: configs ?? [],
-      formulas: formulas ?? [],
+      formulas: formulas?.filter(f=>f !== "") ?? [], // incase user inputs empty string, purely for working case where user has empty formula we don't want to send it
       summary,
       samples,
     }

@@ -69,7 +69,7 @@ const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 
     return []
   }
   const fields = transient[0].fields
-  return fields.filter(f=>f!=='poll_epoch_ns').map((f,i)=>{
+  return fields.filter((f,i)=> !(f === 'poll_epoch_ns' || f === 'sort_id')).map((f,i)=>{ //chalking sort_id
     if (f?.slice(0,3) === "Cfg") {
       const values = transient.map(t => t.values[fields.indexOf(f)])
       return {
@@ -125,6 +125,21 @@ const itemToTimeField = (data: Metric[] | Config[] | TransientRow[], l = 1): Fie
   return []
 }
 
+export const renameDuplicateFields = (fields:FieldDTO<any>[] ) => {
+  const h:{[key:string]: [number,number]} = {}
+  fields.forEach((f,i)=> {
+    if (f.name in h) {
+      fields[ h[f.name][0] ].name = `${f.name} ${0}`
+      h[f.name][1] += 1
+      f.name = `${f.name} ${h[f.name][1]-1}`
+    } else {
+      h[f.name] = [i,1]
+    }
+  })
+  console.log(fields)
+  return fields
+}
+
 export const metricsQuery = (items: SmallItems | null | undefined): MutableDataFrame<any>[]  => {
 
   if (!items || items.length === 0 ) return [new MutableDataFrame({fields:[]})]
@@ -134,12 +149,12 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
     items.forEach(i=> {
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
-        fields: [
+        fields: renameDuplicateFields([
           ...itemToTimeField(i.transient ?? [], 1),
           ...itemToIDField(i, i.transient?.length ?? 1),
           ...itemToRecentConfigFields(i.configs, i.transient?.length ?? 1),
           ...itemToTransientFields(i.transient, 1)
-        ]
+        ])
       });
       frames.push(frame)
     })
@@ -151,7 +166,7 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
     let l = 1
     const metrics = i.metrics
     const configs = i.configs
-    if (metrics.length ===0 && configs.length === 0)  {
+    if (metrics.length === 0 && configs.length === 0)  {
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
         fields: [
@@ -165,18 +180,17 @@ export const metricsQuery = (items: SmallItems | null | undefined): MutableDataF
     const configs_max = Math.max(...configs.map(m=>m.data.length))
     l = Math.max(metrics_max,configs_max)
     l = l == 0? 1 : l
-    const fields = [
+    const fields = renameDuplicateFields([
       ...itemToTimeField(metrics.length == 0 ? configs : metrics, l),
       ...itemToIDField(i, l),
       ...itemToMetricFields(metrics, l),
       ...itemToConfigFields(configs, l)
-    ]
+    ])
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,
       fields
     });
     frames.push(frame)
-    return frame
   })
 
   return frames
