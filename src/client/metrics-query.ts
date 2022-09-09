@@ -136,7 +136,6 @@ export const renameDuplicateFields = (fields:FieldDTO<any>[] ) => {
       h[f.name] = [i,1]
     }
   })
-  console.log(fields)
   return fields
 }
 

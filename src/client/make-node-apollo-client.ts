@@ -25,6 +25,7 @@ export const makeNodeApolloClient = ({url, token}:makeApolloClientOptions): Apol
 
   const fetch = async (input:RequestInfo, options: RequestInit): Promise<Response> => {
     const res = await axiosInstance({
+      method:"post",
       url: input as string,
       data: options.body
     })

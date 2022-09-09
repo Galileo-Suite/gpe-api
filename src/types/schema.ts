@@ -70,8 +70,8 @@ export type ItemRelative_MetricsArgs = {
 
 export type ItemRelativesArgs = {
   custom_tags?: InputMaybe<Array<Scalars['String']>>;
-  epoch_end: Scalars['Int'];
-  epoch_start: Scalars['Int'];
+  epoch_end?: InputMaybe<Scalars['Int']>;
+  epoch_start?: InputMaybe<Scalars['Int']>;
   item_ids?: InputMaybe<Array<Scalars['ID']>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   types?: InputMaybe<Array<Scalars['String']>>;

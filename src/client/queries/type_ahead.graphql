@@ -1,6 +1,6 @@
 query GetCustomTags(
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     epoch_start: $epoch_start
@@ -29,8 +29,8 @@ query GetTransientTypes(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     custom_tags: $custom_tags
@@ -45,8 +45,8 @@ query GetTransientTypes(
 query GetTags(
   $custom_tags: [String!]
   $types: [String!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     custom_tags: $custom_tags
@@ -63,8 +63,8 @@ query GetItems(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   items(
     custom_tags: $custom_tags
@@ -85,8 +85,8 @@ query GetConfigs(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     custom_tags: $custom_tags
@@ -105,8 +105,8 @@ query GetFormulas(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     types: $types
