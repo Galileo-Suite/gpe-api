@@ -3,7 +3,7 @@ import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './clien
 import { metricsQuery } from './client/metrics-query'
 import { DataTransformerConfig, ScopedVars, dateTimeParse} from '@grafana/data'
 
-import { GpeTarget,GrafanaDashboard } from './types';
+import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
@@ -17,12 +17,12 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables) => {
+  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables, target: GpeQuery) => {
     const items = (await this.client.query({
       query: ItemsWithMetricsDocument,
       variables,
     }))?.data.items
-    const frames = metricsQuery(items)
+    const frames = metricsQuery(items, target)
 
     return frames
   }
@@ -40,7 +40,7 @@ export class GpeApi {
           query: ItemsWithMetricsDocument,
           variables,
         }))?.data.items
-        const frames = metricsQuery(items)
+        const frames = metricsQuery(items, target)
 
         return frames;
       })
@@ -51,6 +51,24 @@ export class GpeApi {
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
 
     return hcOptions
+  }
+
+  getPanelByKey = (key: string, dashboard: GrafanaDashboard) => {
+    const panel = dashboard.panels.find(p => p.options.key == key)
+    if (panel === undefined) {
+      console.log(`Could not find ${key} in dashboard`)
+      return null
+    }
+    return panel
+  }
+
+  createChartFromPanel = async (panel: Panel, range?: GrafanaDashboard['time'], scopedVars?: ScopedVars) => {
+    if (range === undefined) {
+      console.log('range was undefiend, please define it something like ', {from: 'now-1d', to:'now'})
+      return;
+    }
+
+    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, range, scopedVars)
   }
 
   grafanaChart = async (key: string, dashboard: GrafanaDashboard) => {

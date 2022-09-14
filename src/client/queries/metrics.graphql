@@ -1,17 +1,17 @@
 query ItemsWithMetrics(
-  $epoch_start: Int!, 
-  $epoch_end: Int!, 
-  $types: [String!], 
-  $tags: [String!], 
-  $custom_tags: [String!], 
-  $item_ids: [ID!], 
+  $epoch_start: Int!,
+  $epoch_end: Int!,
+  $types: [String!],
+  $tags: [String!],
+  $custom_tags: [String!],
+  $item_ids: [ID!],
   $related_to_types: [String!]!,
   $related_to_tags: [String!],
   $related_to_custom_tags: [String!],
-  $related_to_item_ids: [ID!], 
-  $configs: [String!]!, 
-  $formulas: [String!]!, 
-  $summary: Int, 
+  $related_to_item_ids: [ID!],
+  $configs: [String!]!,
+  $formulas: [String!]!,
+  $summary: Int,
   $samples: Int
   $transient_type: String!,
   $transient_fields: [String!]!
@@ -49,7 +49,7 @@ fragment Configs on Item {
       epoch
     }
     start_epoch
-    summary 
+    summary
     field
     data
   }
@@ -79,6 +79,7 @@ fragment Transient on Item {
     child_type: $transient_type
     fields: $transient_fields
   ) {
+    type
     values
     fields
     __typename

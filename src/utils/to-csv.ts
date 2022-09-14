@@ -1,7 +1,6 @@
 import { DataFrame } from '@grafana/data'
 
 export const toCsv = (frames: DataFrame | DataFrame[], itemDelimiter: string = '\t', lineDelimiter:string = '\n' ):string => {
-  console.log(itemDelimiter,lineDelimiter)
   let frame: DataFrame
   if (Array.isArray(frames)) {
     frame = frames[0]

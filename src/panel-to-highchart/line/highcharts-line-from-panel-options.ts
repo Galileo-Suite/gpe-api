@@ -99,12 +99,10 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
   const selected = panelOptions.selectedSeries
 
   series.forEach(s => {
-    console.log(s)
     if (selected === s.name) {
       s = merge(s, {...panelOptions.seriesOptions})
     }
   })
-
   merge(hcOptions.series, series)
 
   return hcOptions
