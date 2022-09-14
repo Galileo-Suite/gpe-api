@@ -1,7 +1,7 @@
 module.exports =  {
   "schema": [
     {
-      "https://jdavis.core.galileosuite.com/atsgroup/graphql": {
+      "https://my.int.galileosuite.com/atsgroup/graphql": {
         "headers": {
           "X-Galileo-Token": process.env.GALILEO_TOKEN
         }
