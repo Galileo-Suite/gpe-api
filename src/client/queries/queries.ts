@@ -36,7 +36,7 @@ export type Item = {
   relatives?: Maybe<Array<ItemInfo>>;
   reporting?: Maybe<Scalars['Boolean']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  transient?: Maybe<Array<TransientRow>>;
+  transient: Array<TransientRow>;
 };
 
 
@@ -317,13 +317,13 @@ export type ItemsWithMetricsQueryVariables = Exact<{
 }>;
 
 
-export type ItemsWithMetricsQuery = { __typename?: 'Query', items: Array<{ __typename: 'Item', id: string, item_type: string, tags?: Array<string> | null, label: string, configs: Array<{ __typename?: 'Config', start_epoch: number, summary: number, field: string, data: Array<string | null>, tuple?: Array<{ __typename?: 'StringTuple', value: string, epoch: number }> | null }>, metrics: Array<{ __typename: 'Metric', start_epoch: number, summary: number, formula: string, data: Array<number | null> }>, transient?: Array<{ __typename: 'TransientRow', type?: string | null, values: Array<string | null>, fields: Array<string | null> }> | null }> };
+export type ItemsWithMetricsQuery = { __typename?: 'Query', items: Array<{ __typename: 'Item', id: string, item_type: string, tags?: Array<string> | null, label: string, configs: Array<{ __typename?: 'Config', start_epoch: number, summary: number, field: string, data: Array<string | null>, tuple?: Array<{ __typename?: 'StringTuple', value: string, epoch: number }> | null }>, metrics: Array<{ __typename: 'Metric', start_epoch: number, summary: number, formula: string, data: Array<number | null> }>, transient: Array<{ __typename: 'TransientRow', type?: string | null, values: Array<string | null>, fields: Array<string | null> }> }> };
 
 export type ConfigsFragment = { __typename?: 'Item', configs: Array<{ __typename?: 'Config', start_epoch: number, summary: number, field: string, data: Array<string | null>, tuple?: Array<{ __typename?: 'StringTuple', value: string, epoch: number }> | null }> };
 
 export type MetricsFragment = { __typename: 'Item', metrics: Array<{ __typename: 'Metric', start_epoch: number, summary: number, formula: string, data: Array<number | null> }> };
 
-export type TransientFragment = { __typename: 'Item', transient?: Array<{ __typename: 'TransientRow', type?: string | null, values: Array<string | null>, fields: Array<string | null> }> | null };
+export type TransientFragment = { __typename: 'Item', transient: Array<{ __typename: 'TransientRow', type?: string | null, values: Array<string | null>, fields: Array<string | null> }> };
 
 export type GetCustomTagsQueryVariables = Exact<{
   epoch_start?: InputMaybe<Scalars['Int']>;

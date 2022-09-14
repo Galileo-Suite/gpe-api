@@ -35,7 +35,7 @@ export type Item = {
   relatives?: Maybe<Array<ItemInfo>>;
   reporting?: Maybe<Scalars['Boolean']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  transient?: Maybe<Array<TransientRow>>;
+  transient: Array<TransientRow>;
 };
 
 

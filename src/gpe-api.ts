@@ -3,7 +3,7 @@ import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './clien
 import { metricsQuery } from './client/metrics-query'
 import { DataTransformerConfig, ScopedVars, dateTimeParse} from '@grafana/data'
 
-import { GpeTarget,GrafanaDashboard, Panel } from './types';
+import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
@@ -17,12 +17,12 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables) => {
+  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables, target: GpeQuery) => {
     const items = (await this.client.query({
       query: ItemsWithMetricsDocument,
       variables,
     }))?.data.items
-    const frames = metricsQuery(items)
+    const frames = metricsQuery(items, target)
 
     return frames
   }
@@ -40,7 +40,7 @@ export class GpeApi {
           query: ItemsWithMetricsDocument,
           variables,
         }))?.data.items
-        const frames = metricsQuery(items)
+        const frames = metricsQuery(items, target)
 
         return frames;
       })
