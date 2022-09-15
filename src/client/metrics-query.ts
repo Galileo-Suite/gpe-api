@@ -150,9 +150,9 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
     const metrics_max = Math.max(...i.metrics.map(m=>m.data.length))
     const configs_max = Math.max(...i.configs.map(m=>m.data.length))
     const transient_max = i.transient ? i.transient.length : 0
-    l = Math.max(metrics_max, configs_max, transient_max)
+    l = Math.max(metrics_max, transient_max)
     l = l == 0? 1 : l
-    console.log(l)
+    console.log(l,JSON.parse(JSON.stringify(i)))
 
     const fields: FieldDTO<any>[] = [
       ...valueToField(i.id, "item_id", l),
@@ -185,6 +185,7 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
         ...itemToMetricFields(i.metrics, l, i.item_type),
       )
     }
+    console.log(fields)
 
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,
