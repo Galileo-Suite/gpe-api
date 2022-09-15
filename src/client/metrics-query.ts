@@ -37,7 +37,6 @@ const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): 
       values = new Array(l).fill(null)
     } else if (values.length !== l) {
       values = new Array(l).fill(m.tuple?.at(-1)?.value ?? null)
-      console.log(l, 'not the same', values)
     }
     return {
       name: `${prefix? prefix+ '_' : ''}${m.field}`,
@@ -168,7 +167,6 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
         ...itemToMetricFields(i.metrics, l, i.item_type),
       )
     }
-    console.log(fields)
 
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,
