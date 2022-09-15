@@ -26,7 +26,7 @@ const itemToMetricFields = (metrics: Metric[], l = 1, prefix=""): FieldDTO<numbe
   })
 }
 
-const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): FieldDTO<string | null>[] => {
+const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -35,6 +35,9 @@ const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): Field
     let values = m.data
     if (values.length === 0 ) {
       values = new Array(l).fill(null)
+    } else if (values.length !== l) {
+      values = new Array(l).fill(m.tuple?.at(-1)?.value ?? null)
+      console.log(l, 'not the same', values)
     }
     return {
       name: `${prefix? prefix+ '_' : ''}${m.field}`,
@@ -43,26 +46,6 @@ const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): Field
       config:{custom:{summary: m.summary}}
     }
   })
-}
-
-const itemToRecentConfigFields = (configs: Config[], l = 1, prefix: string = ""): FieldDTO<string | null>[] => {
-  if (configs.length == 0 ) {
-    return []
-  }
-  const fields: FieldDTO<string | null>[] = []
-  configs.forEach(m=>{
-    if ( !m.tuple ) {
-      return null;
-    }
-    const values = new Array(l).fill(m.tuple[0].value ?? null)
-    fields.push({
-      name: `${prefix? prefix+'_' : ''}${m.field}`,
-      values,
-      type: FieldType.string,
-      config:{custom:{summary: m.summary}}
-    })
-  })
-  return fields
 }
 
 const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1, prefix: string = ""): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
