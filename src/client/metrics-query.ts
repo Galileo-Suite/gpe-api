@@ -154,6 +154,7 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
     l = l == 0? 1 : l
 
     const fields: FieldDTO<any>[] = [
+
       ...valueToField(i.id, "item_id", l),
       ...valueToField(i.item_type, "type", l),
       ...valueToField(i.tags, "tags", l),
@@ -184,6 +185,7 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
         ...itemToMetricFields(i.metrics, l, i.item_type),
       )
     }
+    console.log(fields)
 
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,
