@@ -4,7 +4,7 @@ import { DataQuery, DataSourceJsonData } from '@grafana/data';
 export interface GpeTarget {
   variable: 'types' | 'tags' | 'item_ids' | 'custom_tags' | undefined;
   use_related_to: boolean;
-  request_type: 'metrics' | 'transient'
+  request_type: 'metrics' | 'transient' | 'visualization'
 
   types: string[];
   tags: string[];
@@ -22,6 +22,8 @@ export interface GpeTarget {
 
   transient_type: string
   transient_fields: string[]
+
+  vis_id: string
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}

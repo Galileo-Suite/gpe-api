@@ -12,6 +12,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type Chart = {
+  __typename?: 'Chart';
+  columns: Array<Maybe<Metric>>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type Config = {
   __typename?: 'Config';
   data: Array<Maybe<Scalars['String']>>;
@@ -35,7 +41,7 @@ export type Item = {
   relatives?: Maybe<Array<ItemInfo>>;
   reporting?: Maybe<Scalars['Boolean']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  transient?: Maybe<Array<TransientRow>>;
+  transient: Array<TransientRow>;
 };
 
 
@@ -98,19 +104,41 @@ export type ItemInfo = {
 
 export type Metric = {
   __typename?: 'Metric';
+  alias?: Maybe<Scalars['String']>;
   data: Array<Maybe<Scalars['Float']>>;
+  display_data: Array<Maybe<Scalars['String']>>;
   formula: Scalars['String'];
   id?: Maybe<Scalars['String']>;
+  /** item identifiers */
+  item_id?: Maybe<Scalars['String']>;
+  item_name?: Maybe<Scalars['String']>;
   label?: Maybe<Scalars['String']>;
+  max?: Maybe<Scalars['Float']>;
+  min?: Maybe<Scalars['Float']>;
+  pretty_data: Array<Maybe<Scalars['String']>>;
   samples?: Maybe<Scalars['Int']>;
+  /** range stuff */
   start_epoch: Scalars['Int'];
   summary: Scalars['Int'];
+  /** adding these to support charts */
+  unit?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  chart?: Maybe<Chart>;
   items: Array<Item>;
   type_ahead: TypeAhead;
+};
+
+
+export type QueryChartArgs = {
+  epoch_end?: InputMaybe<Scalars['Int']>;
+  epoch_start?: InputMaybe<Scalars['Int']>;
+  samples?: InputMaybe<Scalars['Int']>;
+  selector: Array<Selector>;
+  summary?: InputMaybe<Scalars['Int']>;
+  vis_id: Scalars['String'];
 };
 
 
@@ -137,6 +165,7 @@ export type QueryType_AheadArgs = {
 export type Selector = {
   custom_tags?: InputMaybe<Array<Scalars['String']>>;
   item_ids?: InputMaybe<Array<Scalars['ID']>>;
+  related_to?: InputMaybe<Array<Selector>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   types?: InputMaybe<Array<Scalars['String']>>;
 };
