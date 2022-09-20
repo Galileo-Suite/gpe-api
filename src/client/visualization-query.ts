@@ -26,7 +26,10 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     }
 
     fields.push({
-      name: c?.label ?? "",
+      config:{
+        unit: c.unit ?? undefined
+      },
+      name: `${c?.label}`,
       type,
       values,
     })
