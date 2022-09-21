@@ -1,7 +1,7 @@
 module.exports =  {
   "schema": [
     {
-      [process.env['ORIGIN']]: {
+      [process.env.ORIGIN]: {
         "headers": {
           "X-Galileo-Token": process.env.GALILEO_TOKEN
         }
