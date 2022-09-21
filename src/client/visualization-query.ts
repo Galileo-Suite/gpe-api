@@ -20,15 +20,15 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     }
     let values: (string | number | null)[] = c.pretty_data
     let type = FieldType.string
-    if (c?.data && c?.data.length > 0) {
+    if (c.unit === "number" || c.unit === "iB") {
       values = c.data
       type = FieldType.number
+    } else if (c.unit?.includes("epoch")) {
+      values = c.data.map(d=>d ? d*1000 : null)
+      type = FieldType.time
     }
 
     fields.push({
-      config:{
-        unit: c.unit ?? undefined
-      },
       name: `${c?.label}`,
       type,
       values,
