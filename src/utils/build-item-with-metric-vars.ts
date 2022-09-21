@@ -3,6 +3,7 @@ import defaults from 'lodash/defaults';
 import { ScopedVars, TimeRange } from '@grafana/data';
 
 import { GpeQuery, defaultGpeQuery } from '../types/query';
+import { unwrapOptionalTimeRange } from './unwrap-optional-time-range';
 import { ItemsWithMetricsQueryVariables } from '../client/queries/queries';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
@@ -25,16 +26,14 @@ export const applyGrafanaVars = <T>(object: T, scopedVars: ScopedVars ): T => {
   return JSON.parse(str) as T;
 };
 
-export const templateTarget = ( target: Partial<GpeQuery>, scopedVars: ScopedVars = {} )=>{
-  let query = defaults(dup(target), defaultGpeQuery);
-  query = applyGrafanaVars(query, scopedVars);
-  return query
-}
-
 export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
-  { epoch_start, epoch_end }: { epoch_start: number, epoch_end:number }
+  { epoch_start, epoch_end }: { epoch_start: number, epoch_end:number },
+  scopedVars: ScopedVars = {},
 ): ItemsWithMetricsQueryVariables => {
+  let query = defaults(dup(target), defaultGpeQuery);
+  query = applyGrafanaVars(query, scopedVars);
+
   let {
     use_related_to,
     request_type,
@@ -55,7 +54,7 @@ export const buildItemWithMetricsVars = (
 
     transient_type,
     transient_fields,
-  } = target;
+  } = query;
 
   let vars: ItemsWithMetricsQueryVariables = {
     epoch_start,

@@ -1,21 +1,14 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
-import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument, VisualizationDocument} from './client/queries/queries'
+import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './client/queries/queries'
 import { metricsQuery } from './client/metrics-query'
-import { visualizationToDataFrame } from './client/visualization-query'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, TimeRange, MutableDataFrame} from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse} from '@grafana/data'
 
 import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
-import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
+import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 
-import {buildVisualizationVars} from './utils/build-visualization-vars'
-
-type Range = {
-  epoch_start: number
-  epoch_end: number
-}
 
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
@@ -24,28 +17,17 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (target: Partial<GpeQuery>, range: Range): Promise<MutableDataFrame<any>[]> => {
-    let frames: MutableDataFrame<any>[] = []
-    if (target.request_type === 'metrics' || target.request_type === 'transient') {
-      const variables = buildItemWithMetricsVars(target, range)
-      const items = (await this.client.query({
-        query: ItemsWithMetricsDocument,
-        variables,
-      }))?.data.items
-      frames = metricsQuery(items, target)
-    } else if (target.request_type === 'visualization') {
-      const variables = buildVisualizationVars(target, range)
-      const chart = (await this.client.query({
-        query: VisualizationDocument,
-        variables,
-      }))?.data.chart
+  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables, target: GpeQuery) => {
+    const items = (await this.client.query({
+      query: ItemsWithMetricsDocument,
+      variables,
+    }))?.data.items
+    const frames = metricsQuery(items, target)
 
-      frames = visualizationToDataFrame(chart, target)
-    }
     return frames
   }
 
-  mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
+  mockGrafana = async (targets: GpeTarget[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
         const r = {
@@ -53,8 +35,12 @@ export class GpeApi {
           epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
         }
 
-        const templatedTarget = templateTarget(target, scopedVars)
-        const frames = this.grafanaQuery(templatedTarget, r)
+        const variables = buildItemWithMetricsVars(target, r, scopedVars);
+        const items = (await this.client.query({
+          query: ItemsWithMetricsDocument,
+          variables,
+        }))?.data.items
+        const frames = metricsQuery(items, target)
 
         return frames;
       })
