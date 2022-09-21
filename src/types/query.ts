@@ -22,6 +22,7 @@ export interface GpeTarget {
 
   transient_type: string
   transient_fields: string[]
+  transient_where: string,
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -47,6 +48,7 @@ export const defaultGpeQuery: Partial<GpeQuery> = {
 
   transient_type: '',
   transient_fields: [],
+  transient_where: "",
 };
 
 

@@ -35,7 +35,7 @@ export type Item = {
   relatives?: Maybe<Array<ItemInfo>>;
   reporting?: Maybe<Scalars['Boolean']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  transient?: Maybe<Array<TransientRow>>;
+  transient: Array<TransientRow>;
 };
 
 
@@ -83,6 +83,7 @@ export type ItemTransientArgs = {
   epoch_end?: InputMaybe<Scalars['Int']>;
   epoch_start?: InputMaybe<Scalars['Int']>;
   fields: Array<Scalars['String']>;
+  where?: InputMaybe<Scalars['String']>;
 };
 
 export type ItemInfo = {
