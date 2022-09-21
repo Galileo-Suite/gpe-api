@@ -136,6 +136,7 @@ export type Query = {
 export type QueryChartArgs = {
   epoch_end?: InputMaybe<Scalars['Int']>;
   epoch_start?: InputMaybe<Scalars['Int']>;
+  options?: InputMaybe<VisOptions>;
   samples?: InputMaybe<Scalars['Int']>;
   selector: Array<Selector>;
   summary?: InputMaybe<Scalars['Int']>;
@@ -217,4 +218,8 @@ export type TypeAhead = {
    * Some fields return for several items but are nulled for others
    */
   types?: Maybe<Array<Scalars['String']>>;
+};
+
+export type VisOptions = {
+  filter?: InputMaybe<Scalars['String']>;
 };
