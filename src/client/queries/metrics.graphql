@@ -15,6 +15,7 @@ query ItemsWithMetrics(
   $samples: Int
   $transient_type: String!,
   $transient_fields: [String!]!
+  $transient_where: String
 ) {
   items(
     types: $types
@@ -78,6 +79,7 @@ fragment Transient on Item {
     epoch_start: $epoch_start
     child_type: $transient_type
     fields: $transient_fields
+    where: $transient_where
   ) {
     type
     values
