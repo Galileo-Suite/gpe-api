@@ -83,6 +83,7 @@ export type ItemTransientArgs = {
   epoch_end?: InputMaybe<Scalars['Int']>;
   epoch_start?: InputMaybe<Scalars['Int']>;
   fields: Array<Scalars['String']>;
+  where?: InputMaybe<Scalars['String']>;
 };
 
 export type ItemInfo = {
@@ -187,4 +188,8 @@ export type TypeAhead = {
    * Some fields return for several items but are nulled for others
    */
   types?: Maybe<Array<Scalars['String']>>;
+};
+
+export type VisOptions = {
+  filter?: InputMaybe<Scalars['String']>;
 };

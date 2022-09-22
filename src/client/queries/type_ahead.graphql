@@ -12,8 +12,8 @@ query GetCustomTags(
 
 query GetTypes(
   $custom_tags: [String!]
-  $epoch_start: Int!
-  $epoch_end: Int!
+  $epoch_start: Int
+  $epoch_end: Int
 ) {
   type_ahead(
     custom_tags: $custom_tags

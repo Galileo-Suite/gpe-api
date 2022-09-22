@@ -68,7 +68,9 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
       series: {
         lineWidth: panelOptions.lineWidth,
         marker: {
-          enabled: panelOptions.marker
+          enabled: panelOptions.marker,
+          radius: panelOptions.markerRadius,
+          symbol: 'circle'
         },
         shadow: getShadow(panelOptions),
         ...getColumnOps(panelOptions)
@@ -77,7 +79,8 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
         stacking: panelOptions.stacking
       },
       column: {
-        stacking: panelOptions.stacking
+        stacking: panelOptions.stacking,
+        opacity: panelOptions.opacity
       },
       area: {
         stacking: panelOptions.stacking,

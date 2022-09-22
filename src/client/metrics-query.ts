@@ -26,7 +26,7 @@ const itemToMetricFields = (metrics: Metric[], l = 1, prefix=""): FieldDTO<numbe
   })
 }
 
-const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): FieldDTO<string | null>[] => {
+const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -35,6 +35,8 @@ const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): Field
     let values = m.data
     if (values.length === 0 ) {
       values = new Array(l).fill(null)
+    } else if (values.length !== l) {
+      values = new Array(l).fill(m.tuple?.at(-1)?.value ?? null)
     }
     return {
       name: `${prefix? prefix+ '_' : ''}${m.field}`,
@@ -43,26 +45,6 @@ const itemToConfigFields = (configs: Config[], l = 1, prefix: string= ""): Field
       config:{custom:{summary: m.summary}}
     }
   })
-}
-
-const itemToRecentConfigFields = (configs: Config[], l = 1, prefix: string = ""): FieldDTO<string | null>[] => {
-  if (configs.length == 0 ) {
-    return []
-  }
-  const fields: FieldDTO<string | null>[] = []
-  configs.forEach(m=>{
-    if ( !m.tuple ) {
-      return null;
-    }
-    const values = new Array(l).fill(m.tuple[0].value ?? null)
-    fields.push({
-      name: `${prefix? prefix+'_' : ''}${m.field}`,
-      values,
-      type: FieldType.string,
-      config:{custom:{summary: m.summary}}
-    })
-  })
-  return fields
 }
 
 const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1, prefix: string = ""): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
@@ -149,12 +131,12 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
     let l = 1
     const metrics_max = Math.max(...i.metrics.map(m=>m.data.length))
     const configs_max = Math.max(...i.configs.map(m=>m.data.length))
-    const transient_max = i.transient.length
+    const transient_max = i.transient ? i.transient.length : 0
     l = Math.max(metrics_max, configs_max, transient_max)
     l = l == 0? 1 : l
-    console.log(l)
 
     const fields: FieldDTO<any>[] = [
+
       ...valueToField(i.id, "item_id", l),
       ...valueToField(i.item_type, "type", l),
       ...valueToField(i.tags, "tags", l),
@@ -163,7 +145,7 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
       fields.push(valueToField(target.custom_tags[0], "custom_tag", l)[0])
     }
 
-    if (i.metrics.length === 0 && i.configs.length === 0 && i.transient.length === 0)  {
+    if (i.metrics.length === 0 && i.configs.length === 0 &&  i.transient && i.transient.length === 0)  {
       const frame = new MutableDataFrame({
         name: `${i.label}_${i.id}`,
         fields,
