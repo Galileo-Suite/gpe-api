@@ -1,7 +1,7 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './client/queries/queries'
 import { metricsQuery } from './client/metrics-query'
-import { DataTransformerConfig, ScopedVars, dateTimeParse} from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame} from '@grafana/data'
 
 import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars } from './utils/build-item-with-metric-vars';
