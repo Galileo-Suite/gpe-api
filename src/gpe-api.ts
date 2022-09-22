@@ -8,6 +8,7 @@ import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-wit
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
+import { dedupeFrameNames } from './utils/dedupe-frame-names';
 
 
 type GpeRange = {
@@ -46,10 +47,7 @@ export class GpeApi {
       })
     )).flat()
 
-    //add dedupe here
-    console.log(frames)
-
-    return frames
+    return dedupeFrameNames(frames)
   }
 
   mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
