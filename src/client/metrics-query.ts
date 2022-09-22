@@ -1,15 +1,18 @@
 
-import { Item, Metric, Config, ItemsWithMetricsDocument, TransientRow } from './queries/queries'
+import { Metric, Config, ItemsWithMetricsDocument, TransientRow } from './queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
-import { GpeQuery, GpeTarget } from 'src/types';
+import { GpeQuery } from 'src/types';
 
 
 type SmallItems = ResultOf<typeof ItemsWithMetricsDocument>['items']
 type Unarray<T> = T extends Array<infer U> ? U : T;
+type SmallMetrics = Unarray<SmallItems>['metrics']
+type SmallTransients = Unarray<SmallItems>['transient']
+type SmallConfigs = Unarray<SmallItems>['configs']
 
-const itemToMetricFields = (metrics: Metric[], l = 1, prefix=""): FieldDTO<number | null>[] => {
+const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix=""): FieldDTO<number | null>[] => {
   if (metrics.length == 0 ) {
     return []
   }
@@ -26,7 +29,7 @@ const itemToMetricFields = (metrics: Metric[], l = 1, prefix=""): FieldDTO<numbe
   })
 }
 
-const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
+const itemToConfigFields = (configs: SmallConfigs, l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -47,7 +50,7 @@ const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): 
   })
 }
 
-const itemToTransientFields = (transient: Unarray<SmallItems>['transient'], l = 1, prefix: string = ""): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
+const itemToTransientFields = (transient: SmallTransients, l = 1, prefix: string = ""): (FieldDTO<string | null> | FieldDTO<number | null>)[] => {
   if (!transient || transient.length == 0 ) {
     return []
   }
@@ -85,9 +88,9 @@ const valueToField = (value: string | string[] | undefined | null, name: string,
   }]
 }
 const itemToTimeField = (item:Unarray<SmallItems>, l = 1): FieldDTO<any>[]  => {
-  let data: Metric[] | Config[] | TransientRow[]
+  let data: SmallMetrics | SmallConfigs | SmallTransients
   if ('metrics' in item && item.metrics.length > 0) {
-    data = item.metrics
+    data = item.metrics as SmallMetrics
   } else if ('configs' in item && item.configs.length > 0 ) {
     data = item.configs
   } else if ('transient' in item && item.transient && item.transient.length > 0 ) {
@@ -118,7 +121,7 @@ const itemToTimeField = (item:Unarray<SmallItems>, l = 1): FieldDTO<any>[]  => {
   return []
 }
 
-export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTarget): MutableDataFrame<any>[]  => {
+export const metricsQuery = (items: SmallItems | null | undefined, target: Partial<GpeQuery>): MutableDataFrame<any>[]  => {
 
   if (!items || items.length === 0 ) {
     return [new MutableDataFrame({fields:[]})]
@@ -136,12 +139,11 @@ export const metricsQuery = (items: SmallItems | null | undefined, target: GpeTa
     l = l == 0? 1 : l
 
     const fields: FieldDTO<any>[] = [
-
       ...valueToField(i.id, "item_id", l),
       ...valueToField(i.item_type, "type", l),
       ...valueToField(i.tags, "tags", l),
     ]
-    if (target.custom_tags.length == 1 ) { // adding this check because its technically only enforced ui wise
+    if (target.custom_tags?.length == 1 ) { // adding this check because its technically only enforced ui wise
       fields.push(valueToField(target.custom_tags[0], "custom_tag", l)[0])
     }
 

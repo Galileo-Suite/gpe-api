@@ -1,4 +1,4 @@
-import { GpeTarget, HighchartsPanelOptions} from './index'
+import { GpeQuery, GpeTarget, HighchartsPanelOptions} from './index'
 import { DataTransformerConfig } from '@grafana/data'
 
 
@@ -14,8 +14,8 @@ export interface GrafanaDashboard {
 }
 
 
-export interface Panel { 
-  targets: GpeTarget[],
+export interface Panel {
+  targets: GpeQuery[],
   transformations: DataTransformerConfig[]
   options: HighchartsPanelOptions
   [key:string]: any
