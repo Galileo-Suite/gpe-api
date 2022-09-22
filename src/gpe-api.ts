@@ -10,6 +10,11 @@ import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 
 
+type Range = {
+  epoch_start: number
+  epoch_end: number
+}
+
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
 
@@ -17,7 +22,7 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (target: Partial<GpeQuery>, range: {epoch_start: number, epoch_end:number}): Promise<MutableDataFrame<any>[]> => {
+  grafanaQuery = async (target: Partial<GpeQuery>, range: Range): Promise<MutableDataFrame<any>[]> => {
     let frames: MutableDataFrame<any>[] = []
     if (target.request_type === 'metrics' || target.request_type === 'transient') {
       const variables = buildItemWithMetricsVars(target, range)
