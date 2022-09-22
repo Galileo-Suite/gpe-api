@@ -1,7 +1,7 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './client/queries/queries'
 import { metricsQuery } from './client/metrics-query'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame} from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame, TimeRange} from '@grafana/data'
 
 import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
@@ -10,7 +10,7 @@ import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 
 
-type Range = {
+type GpeRange = {
   epoch_start: number
   epoch_end: number
 }
@@ -22,7 +22,7 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (target: Partial<GpeQuery>, range: Range): Promise<MutableDataFrame<any>[]> => {
+  grafanaQuery = async (target: Partial<GpeQuery>, range: GpeRange): Promise<MutableDataFrame<any>[]> => {
     let frames: MutableDataFrame<any>[] = []
     if (target.request_type === 'metrics' || target.request_type === 'transient') {
       const variables = buildItemWithMetricsVars(target, range)
@@ -35,6 +35,23 @@ export class GpeApi {
     return frames
   }
 
+  targetsToFrames = async (targets: GpeQuery[], range: GpeRange, scopedVars: ScopedVars = {}): Promise<MutableDataFrame<any>[]> => {
+    const frames  = (await Promise.all(
+      targets.map(async (target) => {
+
+        const templatedTarget = templateTarget(target, scopedVars)
+        const frames = this.grafanaQuery(templatedTarget, range)
+
+        return frames;
+      })
+    )).flat()
+
+    //add dedupe here
+    console.log(frames)
+
+    return frames
+  }
+
   mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
@@ -43,8 +60,7 @@ export class GpeApi {
           epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
         }
 
-        const templatedTarget = templateTarget(target, scopedVars)
-        const frames = this.grafanaQuery(templatedTarget, r)
+        const frames = await this.targetsToFrames(targets, r, scopedVars)
 
         return frames;
       })
