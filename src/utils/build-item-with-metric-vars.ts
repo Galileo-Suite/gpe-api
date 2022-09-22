@@ -55,6 +55,7 @@ export const buildItemWithMetricsVars = (
 
     transient_type,
     transient_fields,
+    transient_where
   } = target;
 
   let vars: ItemsWithMetricsQueryVariables = {
@@ -79,7 +80,8 @@ export const buildItemWithMetricsVars = (
 
     // emptys
     transient_fields: [],
-    transient_type: ''
+    transient_type: '',
+    transient_where,
   };
 
   if (use_related_to === true) {
