@@ -51,23 +51,19 @@ export class GpeApi {
   }
 
   mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
+    const r = {
+      epoch_start: Math.round(dateTimeParse(range.from).toDate().getTime()/1000),
+      epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
+    }
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
-        const r = {
-          epoch_start: Math.round(dateTimeParse(range.from).toDate().getTime()/1000),
-          epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
-        }
-
         const frames = await this.targetsToFrames(targets, r, scopedVars)
-
         return frames;
       })
     )).flat()
 
     const frames = await executeTransforms(Mutableframes, transformations)
-
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
-
     return hcOptions
   }
 
