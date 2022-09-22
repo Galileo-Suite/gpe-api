@@ -17,13 +17,16 @@ export class GpeApi {
     this.client = client
   }
 
-  grafanaQuery = async (variables: ItemsWithMetricsQueryVariables, target: GpeQuery) => {
-    const items = (await this.client.query({
-      query: ItemsWithMetricsDocument,
-      variables,
-    }))?.data.items
-    const frames = metricsQuery(items, target)
-
+  grafanaQuery = async (target: Partial<GpeQuery>, range: Range): Promise<MutableDataFrame<any>[]> => {
+    let frames: MutableDataFrame<any>[] = []
+    if (target.request_type === 'metrics' || target.request_type === 'transient') {
+      const variables = buildItemWithMetricsVars(target, range)
+      const items = (await this.client.query({
+        query: ItemsWithMetricsDocument,
+        variables,
+      }))?.data.items
+      frames = metricsQuery(items, target)
+    }
     return frames
   }
 
