@@ -1,15 +1,16 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
-import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument} from './client/queries/queries'
+import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument, VisualizationDocument} from './client/queries/queries'
 import { metricsQuery } from './client/metrics-query'
 import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame, TimeRange} from '@grafana/data'
 
 import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
+import {buildVisualizationVars} from './utils/build-visualization-vars'
+import {visualizationToDataFrame} from './client/vizualization-query'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 import { dedupeFrameNames } from './utils/dedupe-frame-names';
-
 
 type GpeRange = {
   epoch_start: number
@@ -32,6 +33,14 @@ export class GpeApi {
         variables,
       }))?.data.items
       frames = metricsQuery(items, target)
+    } else if (target.request_type === 'visualization') {
+      const variables = buildVisualizationVars(target, range)
+      const chart = (await this.client.query({
+        query: VisualizationDocument,
+        variables,
+      }))?.data.chart
+
+      frames = visualizationToDataFrame(chart, target)
     }
     return frames
   }
