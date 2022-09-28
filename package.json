@@ -1,6 +1,6 @@
 {
   "name": "@galileo-suite/gpe-api",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "A support package for exporting data from galileo-suite",
   "author": "Joe Davis",
   "main": "./dist/index.js",
