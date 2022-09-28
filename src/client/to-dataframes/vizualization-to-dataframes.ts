@@ -1,8 +1,8 @@
-import { VisualizationDocument } from './queries/queries'
+import { VisualizationDocument } from '../queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO, Field } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
-import { GpeQuery } from '../types';
+import { GpeQuery } from '../../types';
 
 type ChartResponse = ResultOf<typeof VisualizationDocument>['chart']
 
@@ -22,6 +22,10 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     if (c?.data && c?.data.length > 0) {
       values = c.data
       type = FieldType.number
+    }
+    if (c.label === "time") {
+      values = c.data.map(f=>f? f*1000: null)
+      type = FieldType.time
     }
 
     fields.push({

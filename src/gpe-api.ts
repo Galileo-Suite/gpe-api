@@ -1,16 +1,19 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
-import { ItemsWithMetricsQueryVariables, ItemsWithMetricsDocument, VisualizationDocument} from './client/queries/queries'
-import { metricsQuery } from './client/metrics-query'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame, TimeRange} from '@grafana/data'
+import { ItemsWithMetricsDocument, VisualizationDocument, TransientsDocument} from './client/queries/queries'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame } from '@grafana/data'
+import { GpeQuery,GrafanaDashboard, Panel } from './types';
 
-import { GpeQuery, GpeTarget,GrafanaDashboard, Panel } from './types';
 import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
+import { buildTransientVars } from './utils/build-transient-vars';
 import {buildVisualizationVars} from './utils/build-visualization-vars'
-import {visualizationToDataFrame} from './client/vizualization-query'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
 import { dedupeFrameNames } from './utils/dedupe-frame-names';
+
+import { metricsToDataFrames } from './client/to-dataframes/metrics-to-dataframes'
+import { transientsToDataFrames } from './client/to-dataframes/transients-to-dataframes'
+import { visualizationToDataFrame}  from './client/to-dataframes/vizualization-to-dataframes'
 
 type GpeRange = {
   epoch_start: number
@@ -26,14 +29,24 @@ export class GpeApi {
 
   grafanaQuery = async (target: Partial<GpeQuery>, range: GpeRange): Promise<MutableDataFrame<any>[]> => {
     let frames: MutableDataFrame<any>[] = []
-    if (target.request_type === 'metrics' || target.request_type === 'transient') {
+
+    if (target.request_type === 'metrics') {
       const variables = buildItemWithMetricsVars(target, range)
       const items = (await this.client.query({
         query: ItemsWithMetricsDocument,
         variables,
       }))?.data.items
-      frames = metricsQuery(items, target)
-    } else if (target.request_type === 'visualization') {
+      frames = metricsToDataFrames(items, target)
+
+    }  else if ( target.request_type === 'transient' ) {
+      const variables = buildTransientVars(target, range)
+      const items = (await this.client.query({
+        query: TransientsDocument,
+        variables,
+      })).data.items
+      frames = transientsToDataFrames(items, target)
+
+    } else if ( target.request_type === 'visualization' ) {
       const variables = buildVisualizationVars(target, range)
       const chart = (await this.client.query({
         query: VisualizationDocument,

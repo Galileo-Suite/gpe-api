@@ -131,3 +131,22 @@ query TypeAheadDescriptions {
   }
 }
 
+query GetVisIds(
+  $custom_tags: [String!]
+  $types: [String!]
+  $tags: [String!]
+  $item_ids: [ID!]
+  $epoch_start: Int
+  $epoch_end: Int
+) {
+    type_ahead(
+      types: $types
+      tags: $tags
+      custom_tags: $custom_tags
+      item_ids: $item_ids
+      epoch_start: $epoch_start
+      epoch_end: $epoch_end
+    ) {
+      vis_ids
+  }
+}

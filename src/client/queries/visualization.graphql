@@ -21,8 +21,10 @@ query Visualization(
     epoch_start: $epoch_start
     epoch_end: $epoch_end
     vis_id: $vis_id
-    summary: $summary
-    samples: $samples
+    options: {
+      summary: $summary
+      samples: $samples
+    }
     selector:[{
       types: $types
       tags: $tags

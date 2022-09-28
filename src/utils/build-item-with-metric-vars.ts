@@ -78,10 +78,6 @@ export const buildItemWithMetricsVars = (
     related_to_custom_tags: [],
     related_to_item_ids: [],
 
-    // emptys
-    transient_fields: [],
-    transient_type: '',
-    transient_where,
   };
 
   if (use_related_to === true) {
@@ -94,24 +90,14 @@ export const buildItemWithMetricsVars = (
     };
   }
 
-  if (request_type === 'metrics') {
-    vars = {
-      ...vars,
-      configs: configs ?? [],
-      formulas: formulas?.filter(f=>f !== "") ?? [], // incase user inputs empty string, purely for working case where user has empty formula we don't want to send it
-      summary,
-      samples,
-    }
+  vars = {
+    ...vars,
+    configs: configs ?? [],
+    formulas: formulas?.filter(f=>f !== "") ?? [], // incase user inputs empty string, purely for working case where user has empty formula we don't want to send it
+    summary,
+    samples,
   }
 
-  if (request_type==='transient') {
-    vars = {
-      ...vars,
-      configs: configs ?? [],
-      transient_fields: transient_fields ?? [],
-      transient_type: transient_type ?? ''
-    }
-  }
 
   if (vars.samples) {
     vars.summary = null;
