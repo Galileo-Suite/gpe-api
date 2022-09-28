@@ -1,4 +1,4 @@
-query ItemsWithMetrics(
+query Transients(
   $epoch_start: Int!,
   $epoch_end: Int!,
   $types: [String!],
@@ -9,10 +9,14 @@ query ItemsWithMetrics(
   $related_to_tags: [String!],
   $related_to_custom_tags: [String!],
   $related_to_item_ids: [ID!],
-  $configs: [String!]!,
-  $formulas: [String!]!,
+
   $summary: Int,
   $samples: Int
+
+  $configs: [String!]!,
+  $transient_type: String!,
+  $transient_fields: [String!]!
+  $transient_where: String
 ) {
   items(
     types: $types
@@ -27,13 +31,13 @@ query ItemsWithMetrics(
     item_type
     tags
     label
-    ...Configs
-    ...Metrics
+    ...TransientConfigs
+    ...Transient
     __typename
   }
 }
 
-fragment Configs on Item {
+fragment TransientConfigs on Item {
   configs (
     epoch_end: $epoch_end
     epoch_start: $epoch_start
@@ -41,31 +45,28 @@ fragment Configs on Item {
     summary: $summary
     samples: $samples
   ) {
+    field
     tuple {
       value
       epoch
     }
-    start_epoch
-    summary
-    field
-    data
   }
 }
 
-fragment Metrics on Item {
-  metrics(
+fragment Transient on Item {
+  transient(
     epoch_end: $epoch_end
     epoch_start: $epoch_start
-    formulas: $formulas
-    summary: $summary
-    samples: $samples
+    child_type: $transient_type
+    fields: $transient_fields
+    where: $transient_where
   ) {
+    id
     start_epoch
-    summary
-    formula
+    label
     data
+    pretty_data
     __typename
   }
   __typename
 }
-
