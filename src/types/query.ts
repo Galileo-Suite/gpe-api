@@ -25,6 +25,8 @@ export interface GpeTarget {
   transient_where: string,
 
   vis_id: string[]
+  filters: string
+  function: "AVG" | "MAX" | "MIN"
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -52,7 +54,9 @@ export const defaultGpeQuery: Partial<GpeQuery> = {
   transient_fields: [],
   transient_where: "",
 
-  vis_id: []
+  vis_id: [],
+  filters: "",
+  function: "AVG"
 };
 
 
