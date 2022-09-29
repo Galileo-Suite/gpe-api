@@ -29,9 +29,10 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     }
 
     fields.push({
-      name: c?.label ?? "",
+      name: `${c?.label}`,
       type,
       values,
+      config: {unit: c?.unit ?? "", description: 'hello'}
     })
   })
   frames.push(new MutableDataFrame({
