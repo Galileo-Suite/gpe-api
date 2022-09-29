@@ -18,7 +18,8 @@ export const buildVisualizationVars = (
     summary,
     samples,
 
-    vis_id
+    vis_id,
+    filters,
 
   } = target;
 
@@ -40,7 +41,9 @@ export const buildVisualizationVars = (
     related_to_custom_tags: [],
     related_to_item_ids: [],
 
-    vis_id: (vis_id ?? [""])[0]
+    vis_id: (vis_id ?? [""])[0],
+    filters,
+    function: target.function,
   };
 
   if (target.use_related_to === true) {
