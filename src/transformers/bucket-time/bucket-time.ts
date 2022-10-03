@@ -1,23 +1,15 @@
 import { map } from 'rxjs/operators';
 
-import { sortDataFrame, SortedVector, vectorator, ArrayVector } from '@grafana/data';
-import { getFieldDisplayName,  } from '@grafana/data';
+import { ArrayVector } from '@grafana/data';
 import { DataFrame } from '@grafana/data/types';
 import { DataTransformerInfo } from '@grafana/data/types/transformations';
-
-import React, { useCallback } from 'react';
-
-import { TransformerRegistryItem, TransformerUIProps } from '@grafana/data';
-import { InlineField, InlineSwitch, InlineFieldRow, Select } from '@grafana/ui';
 
 export interface BucketTime {
   field: string;
 }
 
 export interface BucketByTransformerOptions {
-  // NOTE: this structure supports an array, however only the first entry is used
-  // future versions may support multi-sort options
-  sort: BucketTime[];
+  bucket: BucketTime[];
 }
 
 export const BucketByTransformer: DataTransformerInfo<BucketByTransformerOptions> = {
@@ -35,10 +27,10 @@ export const BucketByTransformer: DataTransformerInfo<BucketByTransformerOptions
   operator: (options) => (source) =>
     source.pipe(
       map((data) => {
-        if (!Array.isArray(data) || data.length === 0 || !options?.sort?.length) {
+        if (!Array.isArray(data) || data.length === 0 || !options?.bucket?.length) {
           return data;
         }
-        return sortDataFrames(data, options.sort);
+        return sortDataFrames(data, options.bucket);
       })
     ),
 };

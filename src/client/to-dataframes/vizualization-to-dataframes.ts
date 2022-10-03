@@ -26,10 +26,13 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
       unit = c.unit == "number" ? "" : c.unit ?? ""
     }
     if (c.unit === "epoch") {
-      values = c.data.map(f=>f? f*1000: null)
+      values = c.data.map(f=> f? f*1000: null)
       type = FieldType.time
     }
-
+    //this is what grafana uses for bytes (EIC) aka 1024
+    if (unit == "iB"){
+      unit = 'bytes'
+    }
     fields.push({
       name: `${c?.label}`,
       type,
