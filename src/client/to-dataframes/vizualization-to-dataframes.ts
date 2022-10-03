@@ -19,11 +19,13 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     }
     let values: (string | number | null)[] = c.pretty_data
     let type = FieldType.string
+    let unit = ""
     if (c?.data && c?.data.length > 0) {
       values = c.data
       type = FieldType.number
+      unit = c.unit == "number" ? "" : c.unit ?? ""
     }
-    if (c.label === "time") {
+    if (c.unit === "epoch") {
       values = c.data.map(f=>f? f*1000: null)
       type = FieldType.time
     }
@@ -32,7 +34,7 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
       name: `${c?.label}`,
       type,
       values,
-      config: {unit: c?.unit ?? "", description: 'hello'}
+      config: {unit}
     })
   })
   frames.push(new MutableDataFrame({
