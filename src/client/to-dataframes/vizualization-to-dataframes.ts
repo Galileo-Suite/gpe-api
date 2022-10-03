@@ -19,19 +19,25 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     }
     let values: (string | number | null)[] = c.pretty_data
     let type = FieldType.string
+    let unit = ""
     if (c?.data && c?.data.length > 0) {
       values = c.data
       type = FieldType.number
+      unit = c.unit == "number" ? "" : c.unit ?? ""
     }
-    if (c.label === "time") {
-      values = c.data.map(f=>f? f*1000: null)
+    if (c.unit === "epoch") {
+      values = c.data.map(f=> f? f*1000: null)
       type = FieldType.time
     }
-
+    //this is what grafana uses for bytes (EIC) aka 1024
+    if (unit == "iB"){
+      unit = 'bytes'
+    }
     fields.push({
-      name: c?.label ?? "",
+      name: `${c?.label}`,
       type,
       values,
+      config: {unit}
     })
   })
   frames.push(new MutableDataFrame({
