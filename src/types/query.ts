@@ -1,10 +1,13 @@
 
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
+export type MetaFields = 'refid' | "item_id" | "type" | "tags" | "custom_tag" | undefined
+
 export interface GpeTarget {
   variable: 'types' | 'tags' | 'item_ids' | 'custom_tags' | undefined;
   use_related_to: boolean;
   request_type: 'metrics' | 'transient' | 'visualization'
+  includedMetaData?: MetaFields[]
 
   types: string[];
   tags: string[];
@@ -31,7 +34,7 @@ export interface GpeTarget {
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
 
-export const defaultGpeQuery: Partial<GpeQuery> = {
+export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
   variable: 'item_ids',
   use_related_to: false,
   request_type: 'metrics',

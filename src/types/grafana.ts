@@ -19,7 +19,7 @@ export interface GrafanaDashboard {
 
 export interface Panel {
   targets: GpeQuery[],
-  transformations: DataTransformerConfig[]
+  transformations?: DataTransformerConfig[]
   options: HighchartsPanelOptions
   [key:string]: any
 }
