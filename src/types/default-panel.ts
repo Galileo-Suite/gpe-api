@@ -1,0 +1,60 @@
+import { HighchartsPanelOptions } from './panel';
+
+export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
+  key: '',
+  highchartType: 'line',
+  globalOptions: {
+    title: "",
+    enabled: true,
+    useDarkTheme: false,
+    usePanelDimensions: false,
+    tooltip: {
+      pointFormat: '{point.custom.prettyValue} {point.custom.unit}'
+    },
+    options3dEnabled: false,
+    alpha3d: 45,
+    beta3d: 0,
+    depth3d: 35,
+  },
+  highchartPieOptions: {
+    enabled:true,
+    slicedOptions: 'none',
+    slicedOffset: 10,
+
+    innerSize: 0,
+    startAngle: 0,
+    endAngle: undefined,
+    multiSlice: []
+  },
+  highchartLineOptions: {
+    enabled:true,
+    pointType: 'line',
+    lineWidth: 2,
+    opacity: 0,
+    area: false,
+    marker: false,
+    markerRadius: 2,
+    shadow: false,
+    selectedSeries: [],
+    seriesOptions: {},
+    shadowIntensity: 0,
+    stacking: 'unstacked',
+    borderRadius: 0,
+    borderWidth: 0,
+    groupPadding: 0.2,
+    pointPadding: 0.1
+  },
+  highchartBarOptions: {
+    enabled:true
+  },
+  HighchartJsonOverrideOptions: {
+    enabled:true,
+    hcOptions: {
+      "chart": {},
+      "plotOptions": {
+        "series": {}
+      },
+      "series": []
+    }
+  }
+};

@@ -1,25 +1,38 @@
 import Highcharts from 'highcharts'
 
 export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom'
+
 export type HighchartOptions = {
   [key in SupportedHighchartsTypes]: Highcharts.Options
 }
 export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
 }
+
+export type ToolTipPanleOptions = {
+  pointFormat: string
+}
+
 export type HighchartsPanelGlobalOptions = {
-  enabled: Boolean
+  enabled: boolean
   useDarkTheme?: boolean
   usePanelDimensions?: boolean
+  tooltip: ToolTipPanleOptions
+  title:  string
+  options3dEnabled: boolean
+  alpha3d?: number
+  beta3d?: number
+  depth3d?: number
 }
+
 export type HighchartLineOptions = {
-  enabled: Boolean,
-  area: Boolean,
+  enabled: boolean,
+  area: boolean,
   lineWidth: number,
   opacity: number,
-  marker: Boolean,
+  marker: boolean,
   markerRadius: number,
-  shadow: Boolean,
+  shadow: boolean,
   shadowIntensity: number,
   selectedSeries?: Array<string>,
   seriesOptions?: Highcharts.Options,
@@ -30,23 +43,23 @@ export type HighchartLineOptions = {
   groupPadding: number,
   pointPadding: number,
 }
+
 export type HighchartsPieOptions = {
-  enabled: Boolean
+  enabled: boolean
   slicedOptions?: 'none' | 'all' | 'selected'
   slicedOffset?: number
-  alpha3d?: number
-  beta3d?: number
-  depth3d?: number
   innerSize: number
   startAngle: number
   endAngle?: number
   multiSlice?: Array<string>
 }
+
 export type HighchartsBarOptions = {
-  enabled: Boolean
+  enabled: boolean
 }
+
 export type HighchartJsonOverrideOptions = {
-  enabled: Boolean
+  enabled: boolean
   hcOptions: Highcharts.Options
 }
 
@@ -60,55 +73,3 @@ export interface HighchartsPanelOptions {
   HighchartJsonOverrideOptions: HighchartJsonOverrideOptions
 }
 
-export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
-  key: '',
-  highchartType: 'line',
-  globalOptions: {
-    enabled: true,
-    useDarkTheme: false,
-    usePanelDimensions: false,
-  },
-  highchartPieOptions: {
-    enabled:true,
-    slicedOptions: 'none',
-    slicedOffset: 10,
-    alpha3d: 45,
-    beta3d: 0,
-    depth3d: 35,
-    innerSize: 0,
-    startAngle: 0,
-    endAngle: undefined,
-    multiSlice: []
-  },
-  highchartLineOptions: {
-    enabled:true,
-    pointType: 'line',
-    lineWidth: 2,
-    opacity: 0,
-    area: false,
-    marker: false,
-    markerRadius: 2,
-    shadow: false,
-    selectedSeries: [],
-    seriesOptions: {},
-    shadowIntensity: 0,
-    stacking: 'unstacked',
-    borderRadius: 0,
-    borderWidth: 0,
-    groupPadding: 0.2,
-    pointPadding: 0.1
-  },
-  highchartBarOptions: {
-    enabled:true
-  },
-  HighchartJsonOverrideOptions: {
-    enabled:true,
-    hcOptions: {
-      "chart": {},
-      "plotOptions": {
-        "series": {}
-      },
-      "series": []
-    }
-  }
-};

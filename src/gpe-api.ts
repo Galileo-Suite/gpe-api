@@ -1,6 +1,6 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsDocument, VisualizationDocument, TransientsDocument} from './client/queries/queries'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame } from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange, getDefaultTimeRange } from '@grafana/data'
 import { GpeQuery,GrafanaDashboard, Panel } from './types';
 
 import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
@@ -8,12 +8,13 @@ import { buildTransientVars } from './utils/build-transient-vars';
 import {buildVisualizationVars} from './utils/build-visualization-vars'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
-import { highchartObjectFromDataPanelOptions } from './utils/highchart-object-from-data-panel-options';
+import { highchartObjectFromDataPanelOptions } from './panel-to-highchart/highchart-object-from-data-panel-options';
 import { dedupeFrameNames } from './utils/dedupe-frame-names';
 
 import { metricsToDataFrames } from './client/to-dataframes/metrics-to-dataframes'
 import { transientsToDataFrames } from './client/to-dataframes/transients-to-dataframes'
 import { visualizationToDataFrame}  from './client/to-dataframes/vizualization-to-dataframes'
+import { applyPanelTimeOverrides, getTimeRangeOfPanelInDashboard } from './utils';
 
 type GpeRange = {
   epoch_start: number
@@ -72,10 +73,10 @@ export class GpeApi {
     return dedupeFrameNames(frames)
   }
 
-  mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: GrafanaDashboard['time'], scopedVars: ScopedVars = {} ) => {
+  mockGrafana = async (targets: GpeQuery[], transformations: DataTransformerConfig[], panelOptions: HighchartsPanelOptions, range: TimeRange, scopedVars: ScopedVars = {} ) => {
     const r = {
-      epoch_start: Math.round(dateTimeParse(range.from).toDate().getTime()/1000),
-      epoch_end: Math.round(dateTimeParse(range.to).toDate().getTime()/1000)
+      epoch_start:  range.from.unix(),
+      epoch_end: range.to.unix(),
     }
     const Mutableframes = (await Promise.all(
       targets.map(async (target) => {
@@ -83,7 +84,6 @@ export class GpeApi {
         return frames;
       })
     )).flat()
-
     const frames = await executeTransforms(Mutableframes, transformations)
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
     return hcOptions
@@ -103,17 +103,21 @@ export class GpeApi {
       console.log('range was undefiend, please define it something like ', {from: 'now-1d', to:'now'})
       return;
     }
+    const {timeRange} = applyPanelTimeOverrides(panel, getDefaultTimeRange())
 
-    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, range, scopedVars)
+    const transformations = panel.transformations ?? []
+    return await this.mockGrafana(panel.targets, transformations, panel.options, timeRange, scopedVars)
   }
 
   grafanaChart = async (key: string, dashboard: GrafanaDashboard) => {
     const panel = dashboard.panels.find(p => p.options.key == key)
-
     if (panel === undefined) {
       throw new Error(`Could not find panel in dashboard ${dashboard.title}`)
     }
+    const time = getTimeRangeOfPanelInDashboard(dashboard, panel)
+
     const scopedVars:ScopedVars = {}
-    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, dashboard.time, scopedVars)
+    const transformations = panel.transformations ?? []
+    return await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
   }
 }

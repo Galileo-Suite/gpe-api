@@ -1,6 +1,6 @@
 {
   "name": "@galileo-suite/gpe-api",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "A support package for exporting data from galileo-suite",
   "author": "Joe Davis",
   "main": "./dist/index.js",
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@galileo-ui/units": "^1.0.2",
     "@grafana/data": "9",
     "@grafana/runtime": "9",
     "axios": "^0.27.2",
