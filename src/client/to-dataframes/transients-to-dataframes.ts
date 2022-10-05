@@ -4,7 +4,7 @@ import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { GpeQuery } from '../../types';
-import { itemFields } from './utils/item-fields';
+import { itemFields, valueToField } from './utils/item-fields';
 
 
 type SmallItems = ResultOf<typeof TransientsDocument>['items']
@@ -16,20 +16,6 @@ const itemToMetricFields = (metrics: SmallTransients, l = 1, prefix=""): FieldDT
   if (metrics.length == 0 ) {
     return []
   }
-
-  // return metrics.map(m=>{
-    //   let values = m.data
-    //   if (values.length === 0 ) {
-      //     values = new Array(l).fill(null)
-      //   }
-      //   const field = {
-        //     name: `${prefix? prefix+'_' : ''}${m.label}`,
-        //     values,
-        //     type: FieldType.number,
-        //   }
-
-        //   return field
-        // })
 
   const frames: MutableDataFrame<any>[]  = []
   const fields: FieldDTO<any>[] = []
@@ -95,12 +81,22 @@ export const transientsToDataFrames = (items: SmallItems | null | undefined, tar
     const transient_max = i.transient[0].data.length // time length
     const l = Math.max( transient_max, 1)
 
-    const fields: FieldDTO<any>[] = itemFields(i, target, l)
+    const fields: FieldDTO<any>[] = []
 
     fields.push(
       ...itemToConfigFields(i.configs,   l, i.item_type),
       ...itemToMetricFields(i.transient, l, i.item_type),
     )
+
+    target.includedMetaData?.forEach(md=> {
+      switch (md) {
+        case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break
+        case 'custom_tag': fields.push(...valueToField(target.custom_tags?.find(f=>f), 'custom_tags', l) ); break
+        case 'type': fields.push(...valueToField(i.item_type, 'type', l) ); break
+        case 'tags': fields.push(...valueToField(i.tags, 'tags', l) ); break
+        case 'item_id': fields.push(...valueToField(i.id, 'item_id', l) ); break
+      }
+    })
 
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,

@@ -5,7 +5,7 @@ import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { GpeQuery } from '../../types';
 
-import {itemFields} from './utils/item-fields'
+import {itemFields, valueToField} from './utils/item-fields'
 
 
 type SmallItems = ResultOf<typeof ItemsWithMetricsDocument>['items']
@@ -91,7 +91,7 @@ export const metricsToDataFrames = (items: SmallItems | null | undefined, target
     const configs_max = Math.max(...i.configs.map(m=>m.data.length))
     const l = Math.max(metrics_max, configs_max,1)
 
-    const fields: FieldDTO<any>[] = itemFields(i, target, l)
+    const fields: FieldDTO<any>[] = []
 
     if (i.metrics.length === 0 && i.configs.length === 0)  {
       const frame = new MutableDataFrame({
@@ -109,6 +109,16 @@ export const metricsToDataFrames = (items: SmallItems | null | undefined, target
     fields.push(
       ...itemToMetricFields(i.metrics, l, i.item_type),
     )
+
+    target.includedMetaData?.forEach(md=> {
+      switch (md) {
+        case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break
+        case 'custom_tag': fields.push(...valueToField(target.custom_tags?.find(f=>f), 'custom_tags', l) ); break
+        case 'type': fields.push(...valueToField(i.item_type, 'type', l) ); break
+        case 'tags': fields.push(...valueToField(i.tags, 'tags', l) ); break
+        case 'item_id': fields.push(...valueToField(i.id, 'item_id', l) ); break
+      }
+    })
 
     const frame = new MutableDataFrame({
       name: `${i.label}_${i.id}`,

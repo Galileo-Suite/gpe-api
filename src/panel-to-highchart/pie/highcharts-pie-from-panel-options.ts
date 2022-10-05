@@ -9,24 +9,19 @@ export const highchartsPieFromPanelOptions = (highchartPieOptions: HighchartsPan
   }
   const hcOptions: Highcharts.Options = {
     chart:{
-     options3d:{}
+      options3d:{}
     },
     plotOptions:{
-      pie: {
-
-      },
+      pie: { },
     }
   }
   if (!(hcOptions.plotOptions?.pie && hcOptions.chart?.options3d)) {
     return hcOptions
   }
 
-  hcOptions.plotOptions.pie.depth = highchartPieOptions.depth3d
   hcOptions.plotOptions.pie.innerSize = `${highchartPieOptions.innerSize}%`
   hcOptions.plotOptions.pie.startAngle = highchartPieOptions.startAngle
   hcOptions.plotOptions.pie.endAngle = highchartPieOptions.endAngle
-  hcOptions.chart.options3d.alpha = highchartPieOptions.alpha3d
-  hcOptions.chart.options3d.beta = highchartPieOptions.beta3d
   hcOptions.plotOptions.pie.slicedOffset = highchartPieOptions.slicedOffset
 
   const series = highchartsPieFromDataFrame(dataframes)

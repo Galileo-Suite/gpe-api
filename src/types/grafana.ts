@@ -11,12 +11,15 @@ export interface GrafanaDashboard {
   panels: Panel[]
   title:string
   time: {from:string, to:string}
+  timeFrom?: string
+  timeShift?: string
+  hideTimeOverride?: boolean
 }
 
 
 export interface Panel {
   targets: GpeQuery[],
-  transformations: DataTransformerConfig[]
+  transformations?: DataTransformerConfig[]
   options: HighchartsPanelOptions
   [key:string]: any
 }

@@ -3,6 +3,7 @@ import { MutableDataFrame, FieldType, FieldDTO, Field } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { GpeQuery } from '../../types';
+import { valueToField } from './utils/item-fields';
 
 type ChartResponse = ResultOf<typeof VisualizationDocument>['chart']
 
@@ -11,10 +12,10 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     return []
   }
 
-  const frames: MutableDataFrame<any>[]  = []
+  const frames: MutableDataFrame<any>[] = []
   const fields: FieldDTO<any>[] = []
   chart.columns.forEach(c=> {
-    if (!c?.data) {
+    if (!c) {
       return;
     }
     let values: (string | number | null)[] = c.pretty_data
@@ -29,6 +30,7 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
       values = c.data.map(f=> f? f*1000: null)
       type = FieldType.time
     }
+
     //this is what grafana uses for bytes (EIC) aka 1024
     if (unit == "iB"){
       unit = 'bytes'
@@ -40,8 +42,20 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
       config: {unit}
     })
   })
+
+  const l = Math.max(...fields.map(f=> f.values?.length ?? 0))
+  target.includedMetaData?.forEach(md=> {
+    switch (md) {
+      case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break
+      case 'custom_tag': fields.push(...valueToField(target.custom_tags?.find(f=>f), 'custom_tags', l) ); break
+      case 'type': fields.push(...valueToField(null, 'type', l) ); break
+      case 'tags': fields.push(...valueToField(null, 'tags', l) ); break
+      case 'item_id': fields.push(...valueToField(null, 'item_id', l) ); break
+    }
+  })
+
   frames.push(new MutableDataFrame({
-    name: chart.title ?? "",
+    name: target.refId,
     fields
   }))
 
