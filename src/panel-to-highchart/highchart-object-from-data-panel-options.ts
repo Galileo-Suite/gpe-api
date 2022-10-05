@@ -1,7 +1,7 @@
 import { DataFrame } from '@grafana/data'
 import merge from 'lodash.merge'
 import defaults from 'lodash.defaults'
-import {darkHighchartsTheme} from './dark-highcharts-theme'
+import {darkHighchartsTheme} from '../utils/dark-highcharts-theme'
 import Highcharts from 'highcharts'
 import { HighchartsPanelOptions, defaultHighchartsPanelOptions } from '../types'
 
@@ -14,10 +14,10 @@ const defaultPlotOptions = {
 
 const linePlotOptions = {
   plotOptions:{
-    line: defaultPlotOptions, 
-    column: defaultPlotOptions, 
-    area: defaultPlotOptions, 
-    spline: defaultPlotOptions, 
+    line: defaultPlotOptions,
+    column: defaultPlotOptions,
+    area: defaultPlotOptions,
+    spline: defaultPlotOptions,
     areaspline: defaultPlotOptions
   }
 }
@@ -26,20 +26,32 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
   options = defaults(options, defaultHighchartsPanelOptions)
   const hcOptions:Highcharts.Options = {
     colors: ["#6883BA", "#8DB38B", "#FF6542", "#B7245C", "#F5BB00", "#372549", "#C2F970", "#8C2F39", "#F4CAE0"],
+    title:{
+      text: options.globalOptions.title
+    },
     credits:{
       enabled: false
     },
-    chart:{
-      options3d:{
-        enabled: false
+    tooltip: {
+      pointFormat: options.globalOptions.tooltip.pointFormat
+    },
+    plotOptions:{
+      pie: {
+        depth: options.globalOptions.depth3d,
       }
     },
+    chart:{
+      options3d:{
+        alpha: options.globalOptions.alpha3d,
+        beta: options.globalOptions.beta3d,
+        enabled: options.globalOptions.options3dEnabled
+      }
+    }
   }
 
   if (options.globalOptions.useDarkTheme) {
     merge(hcOptions, darkHighchartsTheme, {   chart:{ backgroundColor: 'transparent' }})
   }
-
 
   switch (options.highchartType) {
     case 'line':

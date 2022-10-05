@@ -3,7 +3,7 @@ import {Item } from '../../queries/queries'
 import { FieldDTO, FieldType } from '@grafana/data'
 
 
-const valueToField = (value: string | string[] | undefined | null, name: string, l = 1): FieldDTO<string>[] => {
+export const valueToField = (value: string | string[] | undefined | null, name: string, l = 1): FieldDTO<string>[] => {
   return [{
     name,
     values: new Array(l).fill(value),

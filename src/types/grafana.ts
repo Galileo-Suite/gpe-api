@@ -11,6 +11,9 @@ export interface GrafanaDashboard {
   panels: Panel[]
   title:string
   time: {from:string, to:string}
+  timeFrom?: string
+  timeShift?: string
+  hideTimeOverride?: boolean
 }
 
 

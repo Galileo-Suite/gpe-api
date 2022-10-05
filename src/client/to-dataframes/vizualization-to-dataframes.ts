@@ -3,6 +3,7 @@ import { MutableDataFrame, FieldType, FieldDTO, Field } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { GpeQuery } from '../../types';
+import { valueToField } from './utils/item-fields';
 
 type ChartResponse = ResultOf<typeof VisualizationDocument>['chart']
 
@@ -14,7 +15,7 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
   const frames: MutableDataFrame<any>[]  = []
   const fields: FieldDTO<any>[] = []
   chart.columns.forEach(c=> {
-    if (!c?.data) {
+    if (!c) {
       return;
     }
     let values: (string | number | null)[] = c.pretty_data
@@ -41,8 +42,12 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     })
   })
   frames.push(new MutableDataFrame({
-    name: chart.title ?? "",
-    fields
+    name: target.refId,
+    fields:[
+      fields[0],
+      ...valueToField(target.refId, 'refid', Math.max(...fields.map(f=> f.values?.length ?? 0)) ),
+      ...fields.slice(1,fields.length)
+    ]
   }))
 
   return frames
