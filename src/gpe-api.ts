@@ -84,7 +84,6 @@ export class GpeApi {
         return frames;
       })
     )).flat()
-
     const frames = await executeTransforms(Mutableframes, transformations)
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
     return hcOptions
@@ -106,7 +105,8 @@ export class GpeApi {
     }
     const {timeRange} = applyPanelTimeOverrides(panel, getDefaultTimeRange())
 
-    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, timeRange, scopedVars)
+    const transformations = panel.transformations ?? []
+    return await this.mockGrafana(panel.targets, transformations, panel.options, timeRange, scopedVars)
   }
 
   grafanaChart = async (key: string, dashboard: GrafanaDashboard) => {
@@ -117,6 +117,7 @@ export class GpeApi {
     const time = getTimeRangeOfPanelInDashboard(dashboard, panel)
 
     const scopedVars:ScopedVars = {}
-    return await this.mockGrafana(panel.targets, panel.transformations, panel.options, time, scopedVars)
+    const transformations = panel.transformations ?? []
+    return await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
   }
 }
