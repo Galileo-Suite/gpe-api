@@ -1,20 +1,22 @@
 query Transients(
-  $epoch_start: Int!,
-  $epoch_end: Int!,
-  $types: [String!],
-  $tags: [String!],
-  $custom_tags: [String!],
-  $item_ids: [ID!],
-  $related_to_types: [String!]!,
-  $related_to_tags: [String!],
-  $related_to_custom_tags: [String!],
-  $related_to_item_ids: [ID!],
+  $epoch_start: Int!
+  $epoch_end: Int!
+  $types: [String!]
+  $tags: [String!]
+  $custom_tags: [String!]
+  $item_ids: [ID!]
+  $item_regex: String
+  $related_to_types: [String!]
+  $related_to_tags: [String!]
+  $related_to_custom_tags: [String!]
+  $related_to_item_ids: [ID!]
+  $related_to_item_regex: String
 
-  $summary: Int,
+  $summary: Int
   $samples: Int
 
-  $configs: [String!]!,
-  $transient_type: String!,
+  $configs: [String!]!
+  $transient_type: String!
   $transient_fields: [String!]!
   $transient_where: String
 ) {
@@ -24,11 +26,13 @@ query Transients(
       tags: $tags
       custom_tags: $custom_tags
       item_ids: $item_ids
+      item_regex: $item_regex
       related_to: [{
-        types: $related_to_types,
-        tags: $related_to_tags,
-        item_ids: $related_to_item_ids,
+        types: $related_to_types
+        tags: $related_to_tags
+        item_ids: $related_to_item_ids
         custom_tags: $related_to_custom_tags
+        item_regex: $related_to_item_regex
     	}]
     }]
     epoch_start: $epoch_start

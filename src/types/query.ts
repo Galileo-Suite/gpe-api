@@ -13,6 +13,7 @@ export interface GpeTarget {
   tags: string[];
   custom_tags: string[];
   item_ids: string[];
+  item_regex: string;
   formulas: string[];
   configs: string[];
   summary: number | null;
@@ -22,6 +23,7 @@ export interface GpeTarget {
   related_to_tags: string[];
   related_to_custom_tags: string[];
   related_to_item_ids: string[];
+  related_to_item_regex: string;
 
   transient_type: string
   transient_fields: string[]
@@ -43,6 +45,7 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
   tags: [],
   custom_tags: [],
   item_ids: [],
+  item_regex: "",
   formulas: [],
   configs: [],
   summary: 1 * 60 * 60, // one hour
@@ -52,6 +55,7 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
   related_to_tags: [],
   related_to_custom_tags: [],
   related_to_item_ids: [],
+  related_to_item_regex: "",
 
   transient_type: '',
   transient_fields: [],

@@ -43,6 +43,7 @@ export const buildItemWithMetricsVars = (
     tags,
     custom_tags,
     item_ids,
+    item_regex,
     configs,
     formulas,
     summary,
@@ -52,10 +53,8 @@ export const buildItemWithMetricsVars = (
     related_to_tags,
     related_to_custom_tags,
     related_to_item_ids,
+    related_to_item_regex,
 
-    transient_type,
-    transient_fields,
-    transient_where
   } = target;
 
   let vars: ItemsWithMetricsQueryVariables = {
@@ -65,6 +64,7 @@ export const buildItemWithMetricsVars = (
     tags,
     custom_tags: custom_tags ?? '',
     item_ids,
+    item_regex,
 
     // empty
     configs: [],
@@ -77,7 +77,7 @@ export const buildItemWithMetricsVars = (
     related_to_tags: [],
     related_to_custom_tags: [],
     related_to_item_ids: [],
-
+    related_to_item_regex: "",
   };
 
   if (use_related_to === true) {
@@ -87,6 +87,7 @@ export const buildItemWithMetricsVars = (
       related_to_tags,
       related_to_custom_tags: related_to_custom_tags ?? '',
       related_to_item_ids,
+      related_to_item_regex
     };
   }
 

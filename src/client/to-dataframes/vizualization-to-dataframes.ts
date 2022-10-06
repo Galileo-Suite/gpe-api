@@ -43,7 +43,7 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     })
   })
 
-  const l = Math.max(...fields.map(f=> f.values?.length ?? 0))
+  const l = Math.max(...fields.map(f=> f.values?.length ?? 0), 0)
   target.includedMetaData?.forEach(md=> {
     switch (md) {
       case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break

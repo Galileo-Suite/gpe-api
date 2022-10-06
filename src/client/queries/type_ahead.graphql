@@ -31,6 +31,7 @@ query GetTransientTypes(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
+  $item_regex: String
   $epoch_start: Int
   $epoch_end: Int
 ) {
@@ -40,6 +41,7 @@ query GetTransientTypes(
       types: $types
       tags: $tags
       item_ids: $item_ids
+      item_regex: $item_regex
     }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
@@ -71,16 +73,28 @@ query GetItems(
   $custom_tags: [String!]
   $types: [String!]
   $tags: [String!]
-  $item_ids: [ID!]
+
+  $related_to_types: [String!]
+  $related_to_tags: [String!]
+  $related_to_custom_tags: [String!]
+  $related_to_item_ids: [ID!]
+  $related_to_item_regex: String
+
   $epoch_start: Int
   $epoch_end: Int
 ) {
   items(
     selector:[{
-      custom_tags: $custom_tags
       types: $types
       tags: $tags
-      item_ids: $item_ids
+      custom_tags: $custom_tags
+      related_to: [{
+        custom_tags: $related_to_custom_tags
+        types: $related_to_types
+        tags: $related_to_tags
+        item_ids: $related_to_item_ids
+        item_regex: $related_to_item_regex
+    	}]
     }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
@@ -95,6 +109,7 @@ query GetConfigs(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
+  $item_regex: String
   $epoch_start: Int
   $epoch_end: Int
 ) {
@@ -104,6 +119,7 @@ query GetConfigs(
       types: $types
       tags: $tags
       item_ids: $item_ids
+      item_regex: $item_regex
     }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
@@ -117,6 +133,7 @@ query GetFormulas(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
+  $item_regex: String
   $epoch_start: Int
   $epoch_end: Int
 ) {
@@ -126,6 +143,7 @@ query GetFormulas(
       types: $types
       tags: $tags
       item_ids: $item_ids
+      item_regex: $item_regex
     }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
@@ -150,6 +168,7 @@ query GetVisIds(
   $types: [String!]
   $tags: [String!]
   $item_ids: [ID!]
+  $item_regex: String
   $epoch_start: Int
   $epoch_end: Int
 ) {
@@ -159,6 +178,7 @@ query GetVisIds(
         types: $types
         tags: $tags
         item_ids: $item_ids
+        item_regex: $item_regex
       }]
       epoch_start: $epoch_start
       epoch_end: $epoch_end

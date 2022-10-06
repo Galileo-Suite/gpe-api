@@ -12,6 +12,7 @@ export const buildTransientVars = (
     tags,
     custom_tags,
     item_ids,
+    item_regex,
     configs,
 
     related_to_types,
@@ -31,6 +32,7 @@ export const buildTransientVars = (
     tags,
     custom_tags: custom_tags ?? '',
     item_ids,
+    item_regex,
 
     // empty
     configs: [],
