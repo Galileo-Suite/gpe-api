@@ -1,10 +1,11 @@
-import { GpeQuery } from '../types/query';
-import { TransientsQueryVariables } from '../client/queries/queries';
+import { GpeQuery } from '../../types/query';
+import { ItemsWithMetricsQueryVariables } from '../queries/queries';
 
-export const buildTransientVars = (
+
+export const buildItemWithMetricsVars = (
   target: Partial<GpeQuery>,
   { epoch_start, epoch_end }: { epoch_start: number, epoch_end:number }
-): TransientsQueryVariables => {
+): ItemsWithMetricsQueryVariables => {
   let {
     use_related_to,
 
@@ -14,18 +15,19 @@ export const buildTransientVars = (
     item_ids,
     item_regex,
     configs,
+    formulas,
+    summary,
+    samples,
 
     related_to_types,
     related_to_tags,
     related_to_custom_tags,
     related_to_item_ids,
+    related_to_item_regex,
 
-    transient_type,
-    transient_fields,
-    transient_where
   } = target;
 
-  let vars: TransientsQueryVariables = {
+  let vars: ItemsWithMetricsQueryVariables = {
     epoch_start,
     epoch_end,
     types: types ?? '',
@@ -36,17 +38,16 @@ export const buildTransientVars = (
 
     // empty
     configs: [],
+    formulas: [],
+    summary: null,
+    samples: null,
 
     // empty
     related_to_types: [],
     related_to_tags: [],
     related_to_custom_tags: [],
     related_to_item_ids: [],
-
-    // emptys
-    transient_fields: [],
-    transient_type: '',
-    transient_where,
+    related_to_item_regex: "",
   };
 
   if (use_related_to === true) {
@@ -56,15 +57,18 @@ export const buildTransientVars = (
       related_to_tags,
       related_to_custom_tags: related_to_custom_tags ?? '',
       related_to_item_ids,
+      related_to_item_regex
     };
   }
 
   vars = {
     ...vars,
     configs: configs ?? [],
-    transient_fields: transient_fields ?? [],
-    transient_type: transient_type ?? ''
+    formulas: formulas?.filter(f=>f !== "") ?? [], // incase user inputs empty string, purely for working case where user has empty formula we don't want to send it
+    summary,
+    samples,
   }
+
 
   if (vars.samples) {
     vars.summary = null;

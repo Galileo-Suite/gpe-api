@@ -1,3 +1,6 @@
 export * from './make-apollo-client'
 export * from './make-node-apollo-client'
 export * from './queries/queries'
+export * from './build-query-vars/build-item-with-metric-vars'
+export * from './build-query-vars/build-transient-vars'
+export * from './build-query-vars/build-visualization-vars'

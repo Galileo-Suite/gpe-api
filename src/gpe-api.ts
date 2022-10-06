@@ -3,9 +3,10 @@ import { ItemsWithMetricsDocument, VisualizationDocument, TransientsDocument} fr
 import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange, getDefaultTimeRange } from '@grafana/data'
 import { GpeQuery,GrafanaDashboard, Panel } from './types';
 
-import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
-import { buildTransientVars } from './utils/build-transient-vars';
-import {buildVisualizationVars} from './utils/build-visualization-vars'
+import { buildItemWithMetricsVars } from './client/build-query-vars/build-item-with-metric-vars';
+import { templateTarget } from './utils/template-target'
+import { buildTransientVars } from './client/build-query-vars/build-transient-vars';
+import {buildVisualizationVars} from './client/build-query-vars/build-visualization-vars'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './panel-to-highchart/highchart-object-from-data-panel-options';
@@ -20,6 +21,7 @@ type GpeRange = {
   epoch_start: number
   epoch_end: number
 }
+
 
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>

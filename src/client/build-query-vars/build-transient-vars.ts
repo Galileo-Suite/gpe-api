@@ -1,65 +1,69 @@
-import { GpeQuery } from '../types/query';
-import { VisualizationQueryVariables } from '../client/queries/queries';
+import { GpeQuery } from '../../types/query';
+import { TransientsQueryVariables } from '../queries/queries';
 
-export const buildVisualizationVars = (
+export const buildTransientVars = (
   target: Partial<GpeQuery>,
   { epoch_start, epoch_end }: { epoch_start: number, epoch_end:number }
-): VisualizationQueryVariables => {
-  const {
+): TransientsQueryVariables => {
+  let {
+    use_related_to,
+
     types,
     tags,
     custom_tags,
     item_ids,
     item_regex,
+    configs,
 
     related_to_types,
     related_to_tags,
     related_to_custom_tags,
     related_to_item_ids,
-    related_to_item_regex,
 
-    summary,
-    samples,
-
-    vis_id,
-    filters,
-
+    transient_type,
+    transient_fields,
+    transient_where
   } = target;
 
-  let vars: VisualizationQueryVariables = {
+  let vars: TransientsQueryVariables = {
     epoch_start,
     epoch_end,
-
-    custom_tags,
-    types,
+    types: types ?? '',
     tags,
+    custom_tags: custom_tags ?? '',
     item_ids,
     item_regex,
 
-    summary,
-    samples,
+    // empty
+    configs: [],
 
     // empty
     related_to_types: [],
     related_to_tags: [],
     related_to_custom_tags: [],
     related_to_item_ids: [],
-    related_to_item_regex: "",
 
-    vis_id: (vis_id ?? [""])[0],
-    filters,
-    function: target.function,
+    // emptys
+    transient_fields: [],
+    transient_type: '',
+    transient_where,
   };
 
-  if (target.use_related_to === true) {
+  if (use_related_to === true) {
     vars = {
       ...vars,
       related_to_types: related_to_types ?? '',
       related_to_tags,
       related_to_custom_tags: related_to_custom_tags ?? '',
       related_to_item_ids,
-      related_to_item_regex,
     };
+  }
+
+  vars = {
+    ...vars,
+    configs: configs ?? [],
+    transient_fields: transient_fields ?? [],
+    transient_type: transient_type ?? ''
   }
 
   if (vars.samples) {
