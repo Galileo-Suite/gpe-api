@@ -17,7 +17,7 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
   //case when pie is streched across dataframe
   const allfieldsLengths = dataframes.map(d=>d.fields.map(f=>f.values.toArray().length)).flat()
 
-  if (Math.max(...allfieldsLengths) === 1){
+  if (Math.max(...allfieldsLengths) === 1) {
     dataframes.forEach(frame=>{
       const data = frame.fields.map(f=> {
         const y:number = f.values.toArray()[0]

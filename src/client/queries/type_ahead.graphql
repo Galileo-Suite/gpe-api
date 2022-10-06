@@ -16,7 +16,9 @@ query GetTypes(
   $epoch_end: Int
 ) {
   type_ahead(
-    custom_tags: $custom_tags
+    selector:[{
+      custom_tags: $custom_tags
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ){
@@ -33,7 +35,12 @@ query GetTransientTypes(
   $epoch_end: Int
 ) {
   type_ahead(
-    custom_tags: $custom_tags
+    selector:[{
+      custom_tags: $custom_tags
+      types: $types
+      tags: $tags
+      item_ids: $item_ids
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ){
@@ -49,8 +56,10 @@ query GetTags(
   $epoch_end: Int
 ) {
   type_ahead(
-    custom_tags: $custom_tags
-    types: $types
+    selector:[{
+      custom_tags: $custom_tags
+      types: $types
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ){
@@ -67,10 +76,12 @@ query GetItems(
   $epoch_end: Int
 ) {
   items(
-    custom_tags: $custom_tags
-    types: $types
-    tags: $tags
-    item_ids: $item_ids
+    selector:[{
+      custom_tags: $custom_tags
+      types: $types
+      tags: $tags
+      item_ids: $item_ids
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ) {
@@ -78,7 +89,6 @@ query GetItems(
     label
   }
 }
-
 
 query GetConfigs(
   $custom_tags: [String!]
@@ -89,10 +99,12 @@ query GetConfigs(
   $epoch_end: Int
 ) {
   type_ahead(
-    custom_tags: $custom_tags
-    types: $types
-    tags: $tags
-    item_ids: $item_ids
+    selector:[{
+      custom_tags: $custom_tags
+      types: $types
+      tags: $tags
+      item_ids: $item_ids
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ) {
@@ -109,10 +121,12 @@ query GetFormulas(
   $epoch_end: Int
 ) {
   type_ahead(
-    types: $types
-    tags: $tags
-    custom_tags: $custom_tags
-    item_ids: $item_ids
+    selector:[{
+      custom_tags: $custom_tags
+      types: $types
+      tags: $tags
+      item_ids: $item_ids
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ) {
@@ -140,10 +154,12 @@ query GetVisIds(
   $epoch_end: Int
 ) {
     type_ahead(
-      types: $types
-      tags: $tags
-      custom_tags: $custom_tags
-      item_ids: $item_ids
+      selector:[{
+        custom_tags: $custom_tags
+        types: $types
+        tags: $tags
+        item_ids: $item_ids
+      }]
       epoch_start: $epoch_start
       epoch_end: $epoch_end
     ) {

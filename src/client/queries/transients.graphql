@@ -19,11 +19,18 @@ query Transients(
   $transient_where: String
 ) {
   items(
-    types: $types
-    tags: $tags
-    custom_tags: $custom_tags
-    item_ids: $item_ids
-    related_to: [{types: $related_to_types, tags: $related_to_tags, item_ids: $related_to_item_ids, custom_tags: $related_to_custom_tags}]
+    selector:[{
+      types: $types
+      tags: $tags
+      custom_tags: $custom_tags
+      item_ids: $item_ids
+      related_to: [{
+        types: $related_to_types,
+        tags: $related_to_tags,
+        item_ids: $related_to_item_ids,
+        custom_tags: $related_to_custom_tags
+    	}]
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ) {
