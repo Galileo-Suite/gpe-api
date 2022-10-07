@@ -2,6 +2,8 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
 export type MetaFields = 'refid' | "item_id" | "type" | "tags" | "custom_tag" | undefined
+export type Formula = {formula:string, nameAs: string | null}
+export type Unarray<T> = T extends Array<infer U> ? U : T;
 
 export interface GpeTarget {
   variable: 'types' | 'tags' | 'item_ids' | 'custom_tags' | undefined;
@@ -14,7 +16,7 @@ export interface GpeTarget {
   custom_tags: string[];
   item_ids: string[];
   item_regex: string;
-  formulas: string[];
+  formulas: (Formula | string)[];
   configs: string[];
   summary: number | null;
   samples: number | null;

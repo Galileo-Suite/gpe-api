@@ -3,7 +3,7 @@ import { Metric, Config, ItemsWithMetricsDocument } from '../queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
-import { GpeQuery } from '../../types';
+import { Formula, GpeQuery } from '../../types';
 
 import {itemFields, valueToField} from './utils/item-fields'
 
@@ -13,7 +13,7 @@ type Unarray<T> = T extends Array<infer U> ? U : T;
 type SmallMetrics = Unarray<SmallItems>['metrics']
 type SmallConfigs = Unarray<SmallItems>['configs']
 
-const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix=""): FieldDTO<number | null>[] => {
+const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix="", formulas?: GpeQuery['formulas']): FieldDTO<number | null>[] => {
   if (metrics.length == 0 ) {
     return []
   }
@@ -23,8 +23,16 @@ const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix=""): FieldDTO<n
     if (values.length === 0 ) {
       values = new Array(l).fill(null)
     }
+    //finding the target that matches current formula
+    const formula = formulas?.find(f=>typeof f ==='object' ? f.formula === m.formula : false )
+
+    let name = `${prefix? prefix+'_' : ''}${m.formula}`
+    if (typeof formula === 'object' && formula?.nameAs) {
+      name = formula.nameAs
+    }
+
     return {
-      name: `${prefix? prefix+'_' : ''}${m.formula}`,
+      name,
       values, type: FieldType.number, config:{custom:{summary: m.summary}}
     }
   })
@@ -103,11 +111,11 @@ export const metricsToDataFrames = (items: SmallItems | null | undefined, target
     }
     fields.push(
       ...itemToTimeField(i, l),
-      ...itemToConfigFields(i.configs, l, i.item_type)
+      ...itemToConfigFields(i.configs, l)
     )
 
     fields.push(
-      ...itemToMetricFields(i.metrics, l, i.item_type),
+      ...itemToMetricFields(i.metrics, l, undefined, target.formulas),
     )
 
     target.includedMetaData?.forEach(md=> {
