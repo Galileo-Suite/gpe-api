@@ -26,7 +26,6 @@ export const buildTransientVars = (
     epoch_start,
     epoch_end,
   };
-  console.log(vars)
 
   if (vars.samples) {
     vars.summary = null;
