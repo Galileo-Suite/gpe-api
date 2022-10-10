@@ -31,5 +31,9 @@ export const buildTransientVars = (
     vars.summary = null;
   }
 
+  if (vars.transient_type !== '' && transient_fields?.length === 0) {
+    throw new Error('must select values for transient if selecting transient type')
+  }
+
   return vars;
 };

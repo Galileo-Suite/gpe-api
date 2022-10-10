@@ -1,4 +1,4 @@
-import { simplify } from '@galileo-ui/units'
+import { humanize } from '../../utils/humanize'
 import {DataFrame, FieldType, getFieldDisplayName } from '@grafana/data'
 import Highcharts from 'highcharts'
 
@@ -46,8 +46,9 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
       let custom = {}
 
       if (valueField.config.unit == "bytes") {
-        const {displayUnit, value:prettyValue} = simplify(y, "iB")
-        custom = {pretty: `${prettyValue} ${displayUnit}`, unit: displayUnit, prettyValue}
+        const pretty = humanize(y, false, 2)
+        const [unit, prettyValue] = pretty.split(' ')
+        custom = {pretty, unit, prettyValue}
       }
       data.push({ name, y, custom })
     }

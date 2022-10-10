@@ -41,7 +41,7 @@ export interface GpeQuery extends GpeTarget, DataQuery {}
 export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
   variable: 'item_ids',
   use_related_to: false,
-  request_type: 'metrics',
+  request_type: 'visualization',
 
   types: [],
   tags: [],

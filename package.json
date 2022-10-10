@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
-    "@galileo-ui/units": "^1.0.2",
     "@grafana/data": "9",
     "@grafana/runtime": "9",
     "axios": "^0.27.2",
