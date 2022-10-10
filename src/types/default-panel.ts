@@ -7,10 +7,10 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
     title: "",
     enabled: true,
     useDarkTheme: false,
-    usePanelDimensions: false,
-    tooltip: {
-      pointFormat: '{point.custom.prettyValue} {point.custom.unit}'
-    },
+    usePanelDimensions: true,
+    tooltipFormat:'{point.name}: {point.custom.pretty}',
+    labelFormat:'{point.name}: {point.custom.pretty}',
+    legendFormat:'{point.name}',
     options3dEnabled: false,
     alpha3d: 45,
     beta3d: 0,

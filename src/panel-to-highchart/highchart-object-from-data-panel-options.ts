@@ -33,11 +33,15 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       enabled: false
     },
     tooltip: {
-      pointFormat: options.globalOptions.tooltip.pointFormat
+      // pointFormat: options.globalOptions.tooltipFormat // need to add this back later
+      pointFormat: undefined
     },
     plotOptions:{
       pie: {
         depth: options.globalOptions.depth3d,
+        dataLabels: {
+          format: options.globalOptions.labelFormat
+        }
       }
     },
     chart:{

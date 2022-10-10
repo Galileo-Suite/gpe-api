@@ -22,7 +22,8 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
       const data = frame.fields.map(f=> {
         const y:number = f.values.toArray()[0]
         const name = getFieldDisplayName(f,frame, dataframes)
-        return {name, y}
+        let custom:any = {pretty: y, prettyValue: y, name}
+        return {name, y, custom}
       } )
       let seriesDef:  simplePieSeriesOption = { type:'pie',  data }
       series.push(seriesDef)
@@ -32,23 +33,25 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
 
   dataframes.forEach(frame=>{
     const data: data[] = []
-    const labelField = frame.fields.find(f=> f.type === FieldType.string)
-    const valueField = frame.fields.find(f=> f.type === FieldType.number)
+    const labelField = frame.fields.find(f=> f.type === FieldType.string ||  Array.isArray(f.values.get(0)) )
+    const valueField = frame.fields.find(f=> f.type === FieldType.number &&  !Array.isArray(f.values.get(0)))
     if (labelField === undefined ) {
-      throw new Error('Could not find label field')
+      console.warn('Could not find label field')
+      return []
     }
     if (valueField === undefined ) {
-      throw new Error('Could not find value field')
+      console.warn('Could not find value field')
+      return []
     }
     for (let i = 0; i < labelField.values.length; i++) {
-      const name = labelField.values.get(i)
+      //doing this to handle array as title cases with reduce row field calculation
+      const name = Array.isArray(labelField.values.get(i))? labelField.values.get(i).join(",") : labelField.values.get(i)
       const y =    valueField.values.get(i)
-      let custom = {}
-
+      let custom:any = {pretty: y, prettyValue: y}
       if (valueField.config.unit == "bytes") {
         const pretty = humanize(y, false, 2)
-        const [unit, prettyValue] = pretty.split(' ')
-        custom = {pretty, unit, prettyValue}
+        const [prettyValue, unit] = pretty.split(' ')
+        custom = {pretty, unit, prettyValue, name}
       }
       data.push({ name, y, custom })
     }
@@ -56,7 +59,6 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
     let seriesDef: simplePieSeriesOption = { type:'pie',  data }
     series.push(seriesDef)
   })
-
   return series
 
 }

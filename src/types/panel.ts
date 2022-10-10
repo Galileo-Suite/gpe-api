@@ -9,20 +9,19 @@ export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
 }
 
-export type ToolTipPanleOptions = {
-  pointFormat: string
-}
-
 export type HighchartsPanelGlobalOptions = {
+  unit?: string
   enabled: boolean
   useDarkTheme?: boolean
   usePanelDimensions?: boolean
-  tooltip: ToolTipPanleOptions
   title:  string
   options3dEnabled: boolean
   alpha3d?: number
   beta3d?: number
   depth3d?: number
+  tooltipFormat: string
+  labelFormat: string
+  legendFormat: string
 }
 
 export type HighchartLineOptions = {
