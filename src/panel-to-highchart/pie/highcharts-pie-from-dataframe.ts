@@ -7,7 +7,6 @@ interface data extends Highcharts.PointOptionsObject {
   name:string
 }
 interface simplePieSeriesOption {
-  type: 'pie',
   data: data[]
 }
 
@@ -25,7 +24,7 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
         let custom:any = {pretty: y, prettyValue: y, name}
         return {name, y, custom}
       } )
-      let seriesDef:  simplePieSeriesOption = { type:'pie',  data }
+      let seriesDef:  simplePieSeriesOption = { data }
       series.push(seriesDef)
     })
     return series
@@ -56,7 +55,7 @@ export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSe
       data.push({ name, y, custom })
     }
 
-    let seriesDef: simplePieSeriesOption = { type:'pie',  data }
+    let seriesDef: simplePieSeriesOption = { data }
     series.push(seriesDef)
   })
   return series

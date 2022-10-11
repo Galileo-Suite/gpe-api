@@ -1,20 +1,23 @@
 import { HighchartsPanelOptions } from '../../types'
 import {DataFrame } from '@grafana/data'
-import Highcharts from 'highcharts'
+import Highcharts, { SeriesOptionsType, SeriesPieOptions } from 'highcharts'
 import { highchartsPieFromDataFrame } from './highcharts-pie-from-dataframe';
+import merge from 'lodash.merge';
 
 export const highchartsPieFromPanelOptions = (highchartPieOptions: HighchartsPanelOptions['highchartPieOptions'], dataframes: DataFrame[]): Highcharts.Options => {
   if (highchartPieOptions.enabled === false) {
-    return {series: highchartsPieFromDataFrame(dataframes)};
+    return {series: highchartsPieFromDataFrame(dataframes) as SeriesPieOptions[]};
   }
-  const hcOptions: Highcharts.Options = {
+  const hcOptions: Highcharts.Options = merge(highchartPieOptions,{
     chart:{
-      options3d:{}
+      type:'pie',
+      options3d: { }
     },
     plotOptions:{
       pie: { },
     }
-  }
+  })
+
   if (!(hcOptions.plotOptions?.pie && hcOptions.chart?.options3d)) {
     return hcOptions
   }
@@ -27,7 +30,7 @@ export const highchartsPieFromPanelOptions = (highchartPieOptions: HighchartsPan
   const series = highchartsPieFromDataFrame(dataframes)
   let selected:string[] = []
   if (highchartPieOptions.slicedOptions == 'all') {
-    series.forEach(s=>s.data.forEach(d=>selected.push(d.name)))
+    series.forEach(s=>s.data?.forEach(d=>selected.push(d.name)))
   } else if (highchartPieOptions.slicedOptions === 'selected') {
     selected = highchartPieOptions.multiSlice ?? []
   }
@@ -40,8 +43,8 @@ export const highchartsPieFromPanelOptions = (highchartPieOptions: HighchartsPan
     })
   })
 
-
-  hcOptions.series = series
+//doing this cuz i don't want type to bedefined there
+  hcOptions.series = series as SeriesPieOptions[]
 
   return hcOptions
 }
