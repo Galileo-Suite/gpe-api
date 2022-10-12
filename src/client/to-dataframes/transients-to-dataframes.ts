@@ -69,39 +69,31 @@ export const transientsToDataFrames = (items: SmallItems | null | undefined, tar
   const frames: MutableDataFrame<any>[] = []
 
   items.forEach(i => {
-    if (i.transient.length === 0) {
-      const frame = new MutableDataFrame({
-        name: `${i.label}_${i.id}`,
-        fields:  itemFields(i, target, 1)
-      });
-      frames.push(frame)
-      return;
-    }
-    //finding height of table
-    const transient_max = i.transient[0].data.length // time length
-    const l = Math.max( transient_max, 1)
-
     const fields: FieldDTO<any>[] = []
+    const name = `${i.label}_${i.id}`
+
+    let l = 1
+    if (i.transient.length !== 0) {
+      const transient_max = i.transient[0].data.length // time length
+      l = Math.max( transient_max, 1)
+    }
 
     fields.push(
+      ...valueToField(i.id, 'item_id', l),
       ...itemToConfigFields(i.configs,   l, i.item_type),
       ...itemToMetricFields(i.transient, l, i.item_type),
-    )
+      )
 
     target.includedMetaData?.forEach(md=> {
       switch (md) {
         case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break
-        case 'custom_tag': fields.push(...valueToField(target.custom_tags?.find(f=>f), 'custom_tags', l) ); break
         case 'type': fields.push(...valueToField(i.item_type, 'type', l) ); break
         case 'tags': fields.push(...valueToField(i.tags, 'tags', l) ); break
-        case 'item_id': fields.push(...valueToField(i.id, 'item_id', l) ); break
+        case 'custom_tag': fields.push(...valueToField(target.custom_tags?.find(f=>f), 'custom_tags', l) ); break
       }
     })
 
-    const frame = new MutableDataFrame({
-      name: `${i.label}_${i.id}`,
-      fields
-    });
+    const frame = new MutableDataFrame({name, fields});
     frames.push(frame)
   })
 

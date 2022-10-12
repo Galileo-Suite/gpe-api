@@ -14,6 +14,8 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
 
   const frames: MutableDataFrame<any>[] = []
   const fields: FieldDTO<any>[] = []
+  const l = Math.max(...chart.columns.map(c=>(c?.data.length??0)), 1)
+
   chart.columns.forEach(c=> {
     if (!c) {
       return;
@@ -35,6 +37,9 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     if (unit == "iB"){
       unit = 'bytes'
     }
+    if (unit == "iB/s"){
+      unit = 'bytes/s'
+    }
     fields.push({
       name: `${c?.label}`,
       type,
@@ -43,7 +48,6 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
     })
   })
 
-  const l = Math.max(...fields.map(f=> f.values?.length ?? 0), 0)
   target.includedMetaData?.forEach(md=> {
     switch (md) {
       case 'refid': fields.push(...valueToField(target.refId, 'refid', l) ); break

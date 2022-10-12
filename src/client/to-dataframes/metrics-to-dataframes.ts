@@ -111,11 +111,8 @@ export const metricsToDataFrames = (items: SmallItems | null | undefined, target
     }
     fields.push(
       ...itemToTimeField(i, l),
-      ...itemToConfigFields(i.configs, l)
-    )
-
-    fields.push(
-      ...itemToMetricFields(i.metrics, l, undefined, target.formulas),
+      ...itemToConfigFields(i.configs, l),
+      ...itemToMetricFields(i.metrics, l, undefined, target.formulas)
     )
 
     target.includedMetaData?.forEach(md=> {
