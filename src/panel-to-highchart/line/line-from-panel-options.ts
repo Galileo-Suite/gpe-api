@@ -1,7 +1,7 @@
-import { HighchartOptions, HighchartsBarOptions, HighchartsPanelOptions } from '../../types'
-import Highcharts, { chart } from 'highcharts'
+import { HighchartsPanelOptions } from '../../types'
+import Highcharts from 'highcharts'
 import { DataFrame } from '@grafana/data'
-import { highchartsLineFromDataFrame } from './highcharts-line-from-dataframe'
+import { lineFromDataFrame } from './line-from-dataframe'
 import merge from 'lodash.merge'
 import { OptionsUIRegistryBuilder } from '@grafana/data/types/OptionsUIRegistryBuilder'
 
@@ -46,7 +46,7 @@ const getColumnOps = (panelOptions: HighchartsPanelOptions['highchartLineOptions
   }
 }
 
-export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOptions['highchartLineOptions'], dataframes: DataFrame[]): Highcharts.Options => {
+export const lineFromPanelOptions = (panelOptions: HighchartsPanelOptions['highchartLineOptions'], dataframes: DataFrame[]): Highcharts.Options => {
   if (panelOptions.enabled === false) {
     return {};
   }
@@ -57,7 +57,7 @@ export const highchartsLineFromPanelOptions = (panelOptions: HighchartsPanelOpti
     }
   }
 
-  const series = highchartsLineFromDataFrame(dataframes)
+  const series = lineFromDataFrame(dataframes)
   hcOptions.series = series as Highcharts.SeriesOptionsType[]
 
   hcOptions.chart = {...hcOptions.chart}

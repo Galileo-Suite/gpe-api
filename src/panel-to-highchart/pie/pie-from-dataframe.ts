@@ -10,7 +10,7 @@ interface simplePieSeriesOption {
   data: data[]
 }
 
-export const highchartsPieFromDataFrame = (dataframes: DataFrame[]): simplePieSeriesOption[] => {
+export const pieFromDataFrame = (dataframes: DataFrame[]): simplePieSeriesOption[] => {
   let series:  simplePieSeriesOption[] = []
 
   //case when pie is streched across dataframe

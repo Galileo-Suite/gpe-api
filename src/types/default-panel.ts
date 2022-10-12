@@ -47,6 +47,16 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   highchartBarOptions: {
     enabled:true
   },
+  highchartItemOptions: {
+    enabled: true,
+    innerSize: 40,
+    startAngle: -90,
+    endAngle: 90,
+    marker: 'square',
+    shape: 'rectangle',
+    totalCount: 100,
+    rows: 10
+  },
   HighchartJsonOverrideOptions: {
     enabled:true,
     hcOptions: {

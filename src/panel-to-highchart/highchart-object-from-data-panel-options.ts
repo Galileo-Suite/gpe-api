@@ -5,21 +5,12 @@ import {darkHighchartsTheme} from '../utils/dark-highcharts-theme'
 import Highcharts from 'highcharts'
 import { HighchartsPanelOptions, defaultHighchartsPanelOptions } from '../types'
 
-import {highchartsLineFromPanelOptions} from '../panel-to-highchart/line/highcharts-line-from-panel-options'
-import {highchartsPieFromPanelOptions} from '../panel-to-highchart/pie/highcharts-pie-from-panel-options'
+import {lineFromPanelOptions} from './line/line-from-panel-options'
+import {pieFromPanelOptions} from './pie/pie-from-panel-options'
+import {itemFromPanelOptions} from './item/item-from-panel-options'
 
 const defaultPlotOptions = {
   animation: {duration: 0}
-}
-
-const linePlotOptions = {
-  plotOptions:{
-    line: defaultPlotOptions,
-    column: defaultPlotOptions,
-    area: defaultPlotOptions,
-    spline: defaultPlotOptions,
-    areaspline: defaultPlotOptions
-  }
 }
 
 export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: HighchartsPanelOptions) => {
@@ -42,6 +33,11 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
         dataLabels: {
           format: options.globalOptions.labelFormat
         }
+      },
+      item: {
+        dataLabels: {
+          format: options.globalOptions.labelFormat
+        }
       }
     },
     chart:{
@@ -59,10 +55,13 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
 
   switch (options.highchartType) {
     case 'line':
-      merge(hcOptions, linePlotOptions, highchartsLineFromPanelOptions(options.highchartLineOptions, data))
+      merge(hcOptions, {plotOptions:{line: defaultPlotOptions}}, lineFromPanelOptions(options.highchartLineOptions, data))
       break;
       case 'pie':
-      merge(hcOptions, {plotOptions:{pie: defaultPlotOptions}}, highchartsPieFromPanelOptions(options.highchartPieOptions, data))
+      merge(hcOptions, {plotOptions:{pie: defaultPlotOptions}}, pieFromPanelOptions(options.highchartPieOptions, data))
+      break;
+      case 'item':
+      merge(hcOptions, {plotOptions:{item: defaultPlotOptions}}, itemFromPanelOptions(options.highchartItemOptions, data))
       break;
     default:
       throw new Error(`${options.highchartType} is not valid`)

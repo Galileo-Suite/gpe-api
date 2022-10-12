@@ -4,7 +4,7 @@ import { getFieldDisplayName } from '@grafana/data';
 
 type OmitType<T> = Omit<T, 'type'>
 type lineOptions = OmitType<Highcharts.SeriesLineOptions> | OmitType<Highcharts.SeriesBarOptions> | OmitType<Highcharts.SeriesColumnOptions> | OmitType<Highcharts.SeriesAreaOptions> & {type?:string}
-export const highchartsLineFromDataFrame = (dataframes: DataFrame[]): lineOptions[] => {
+export const lineFromDataFrame = (dataframes: DataFrame[]): lineOptions[] => {
   let series: lineOptions[] = []
   let time: number[] | null = null
   dataframes.forEach(frame=>{
