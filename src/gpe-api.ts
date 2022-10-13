@@ -100,12 +100,17 @@ export class GpeApi {
     return panel
   }
 
-  createChartFromPanel = async (panel: Panel, range?: GrafanaDashboard['time'], scopedVars?: ScopedVars) => {
-    if (range === undefined) {
+  createChartFromPanel = async (panel: Panel, time?: GrafanaDashboard['time'], scopedVars?: ScopedVars) => {
+    if (time === undefined) {
       console.log('range was undefiend, please define it something like ', {from: 'now-1d', to:'now'})
       return;
     }
-    const {timeRange} = applyPanelTimeOverrides(panel, getDefaultTimeRange())
+    const dashboardTimeRange: TimeRange = {
+      from: dateTimeParse(time.from),
+      to: dateTimeParse(time.to),
+      raw: time
+    }
+    const {timeRange} = applyPanelTimeOverrides(panel, dashboardTimeRange)
 
     const transformations = panel.transformations ?? []
     return await this.mockGrafana(panel.targets, transformations, panel.options, timeRange, scopedVars)

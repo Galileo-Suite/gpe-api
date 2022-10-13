@@ -17,6 +17,7 @@ export const executeTransforms = async (frames: MutableDataFrame[], transformati
 
   //@ts-ignore
   if (!standardTransformersRegistry.initialized) {
+    console.log('initing standardTransformersRegistry')
     standardTransformersRegistry.setInit(() => {
       const registryTransformerInits = Object.values(standardTransformers).map((t) => toRegistryItem(t) );
       return [
