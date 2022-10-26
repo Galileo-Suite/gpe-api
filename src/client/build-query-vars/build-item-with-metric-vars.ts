@@ -2,6 +2,7 @@ import { GpeQuery } from '../../types/query';
 import { ItemsWithMetricsQueryVariables } from '../queries/queries';
 import { buildSelectorVars } from './build-selector-vars'
 import { buildSummaryVars } from './build-summary-vars'
+import { buildForecastVars } from './build-forecast-vars'
 
 
 export const buildItemWithMetricsVars = (
@@ -11,11 +12,18 @@ export const buildItemWithMetricsVars = (
   let {
     configs,
     formulas,
+
+    use_forecast,
+    frequency,
+    periods,
+    flexibility,
+
   } = target;
 
   let vars: ItemsWithMetricsQueryVariables = {
     ...buildSelectorVars(target),
     ...buildSummaryVars(target),
+    ...buildForecastVars(target),
 
     configs: configs ?? [],
     formulas: formulas?.map(f=>typeof f === 'string'? f : f.formula).filter(f=>f !== "" ) ?? [], // incase user inputs empty string, if user add a formula but doesn't type anything

@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type Chart = {
   __typename?: 'Chart';
-  columns: Array<Maybe<Metric>>;
+  columns: Array<Metric>;
   title?: Maybe<Scalars['String']>;
 };
 
@@ -26,6 +26,24 @@ export type Config = {
   summary: Scalars['Int'];
   tuple?: Maybe<Array<StringTuple>>;
   value?: Maybe<Scalars['String']>;
+};
+
+export type Forecast = {
+  __typename?: 'Forecast';
+  actual: Array<Maybe<Scalars['Float']>>;
+  forecast: Array<Maybe<Scalars['Float']>>;
+  lower: Array<Maybe<Scalars['Float']>>;
+  time: Array<Maybe<Scalars['Float']>>;
+  upper: Array<Maybe<Scalars['Float']>>;
+};
+
+export type ForecastOpts = {
+  /** Higher corresponds to tighter fit, defaults to 0.05 */
+  flexibility?: InputMaybe<Scalars['Float']>;
+  /** Count then unit example 30D (units are S M H D) defaults to D (1 day) */
+  frequency?: InputMaybe<Scalars['String']>;
+  /** Number of points at that frequency defaults to 30 */
+  periods?: InputMaybe<Scalars['Int']>;
 };
 
 export type Item = {
@@ -107,7 +125,7 @@ export type Metric = {
   __typename?: 'Metric';
   alias?: Maybe<Scalars['String']>;
   data: Array<Maybe<Scalars['Float']>>;
-  display_data: Array<Maybe<Scalars['String']>>;
+  forecast?: Maybe<Forecast>;
   formula?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   /** item identifiers */
@@ -123,6 +141,11 @@ export type Metric = {
   summary?: Maybe<Scalars['Int']>;
   /** adding these to support charts */
   unit?: Maybe<Scalars['String']>;
+};
+
+
+export type MetricForecastArgs = {
+  opts?: InputMaybe<ForecastOpts>;
 };
 
 export type Query = {

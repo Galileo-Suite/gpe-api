@@ -15,6 +15,10 @@ query ItemsWithMetrics(
   $formulas: [String!]!
   $summary: Int
   $samples: Int
+  $use_forecast: Boolean!
+  $frequency: String
+  $periods: Int
+  $flexibility: Float
 ) {
   items(
    selector:[{
@@ -72,11 +76,28 @@ fragment Metrics on Item {
     samples: $samples
   ) {
     start_epoch
+    pretty_data
     summary
     formula
     data
+    ...MetricsForecast @include(if: $use_forecast)
     __typename
   }
   __typename
+}
+
+fragment MetricsForecast on Metric {
+  forecast(opts:{
+    frequency: $frequency,
+    periods: $periods,
+    flexibility: $flexibility
+  }) {
+    actual
+    time
+    forecast
+    upper
+    lower
+	}
+
 }
 
