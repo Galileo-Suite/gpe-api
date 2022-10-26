@@ -17,7 +17,6 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
   if (metrics.length == 0 ) {
     return []
   }
-  console.log(metrics)
 
   const returnMetrics:FieldDTO<number | null | string>[] = []
   metrics.forEach(m=>{

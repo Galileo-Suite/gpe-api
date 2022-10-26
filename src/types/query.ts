@@ -37,8 +37,8 @@ export interface GpeTarget {
 
   use_forecast: boolean
   frequency: string
-  periods: number
-  flexibility: number
+  periods: string
+  flexibility: string
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -74,8 +74,8 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
 
   use_forecast: false,
   frequency: '1D',
-  periods: 30,
-  flexibility: 0.05,
+  periods: '30',
+  flexibility:' 0.05',
 };
 
 
