@@ -56,7 +56,6 @@ query Visualization(
       label
       unit
       data
-      display_data
       pretty_data
       ...MetricsForecast @include(if: $use_forecast)
     }
