@@ -20,6 +20,11 @@ query Visualization(
   $function: String
 
   $vis_id: String!
+
+  $use_forecast: Boolean!
+  $frequency: String
+  $periods: Int
+  $flexibility: Float
 ) {
   chart(
     epoch_start: $epoch_start
@@ -51,7 +56,9 @@ query Visualization(
       label
       unit
       data
+      display_data
       pretty_data
+      ...MetricsForecast @include(if: $use_forecast)
     }
   }
 }

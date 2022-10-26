@@ -34,6 +34,11 @@ export interface GpeTarget {
   vis_id: string[]
   filters: string
   function: "AVG" | "MAX" | "MIN"
+
+  use_forecast: boolean
+  frequency: string
+  periods: number
+  flexibility: number
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -65,7 +70,12 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
 
   vis_id: [],
   filters: "",
-  function: "AVG"
+  function: "AVG",
+
+  use_forecast: false,
+  frequency: '1D',
+  periods: 30,
+  flexibility: 0.05,
 };
 
 
