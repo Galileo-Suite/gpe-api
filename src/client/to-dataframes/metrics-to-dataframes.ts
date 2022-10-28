@@ -43,7 +43,7 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
       unit = 'bytes/s'
     }
     if (m.unit == "number") {
-      unit = m.unit ?? ""
+      unit = ""
     }
 
     //finding the target that matches current formula
