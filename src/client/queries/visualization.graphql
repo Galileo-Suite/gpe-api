@@ -22,9 +22,7 @@ query Visualization(
   $vis_id: String!
 
   $use_forecast: Boolean!
-  $frequency: String
-  $periods: Int
-  $flexibility: Float
+  $forecast_opts: ForecastOpts
 ) {
   chart(
     epoch_start: $epoch_start

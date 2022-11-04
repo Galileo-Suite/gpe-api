@@ -11,11 +11,14 @@ export const buildVisualizationVars = (
   const {
     vis_id,
     filters,
+    use_forecast
   } = target;
 
   let vars: VisualizationQueryVariables = {
     ...buildSelectorVars({...target}),
     ...buildSummaryVars({...target}),
+
+    use_forecast: use_forecast ?? false,
     ...buildForecastVars({...target}),
 
     vis_id: (vis_id ?? [""])[0],

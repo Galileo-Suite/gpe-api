@@ -35,6 +35,7 @@ export class GpeApi {
 
     if (target.request_type === 'metrics') {
       const variables = buildItemWithMetricsVars(target, range)
+      console.log(variables)
       const items = (await this.client.query({
         query: ItemsWithMetricsDocument,
         variables,
