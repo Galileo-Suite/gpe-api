@@ -1,6 +1,5 @@
 import { VisualizationDocument } from '../queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO, Field } from '@grafana/data';
-import {MetricFields} from './metrics-to-dataframes'
 
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { GpeQuery } from '../../types';
@@ -17,7 +16,37 @@ export const visualizationToDataFrame = (chart: ChartResponse, target: Partial<G
   const fields: FieldDTO<any>[] = []
   const l = Math.max(...chart.columns.map(c=>(c?.data.length??0)), 1)
 
-  fields.push(...MetricFields(chart.columns, 1, undefined))
+  chart.columns.forEach(c=> {
+    if (!c) {
+      return;
+    }
+    let values: (string | number | null)[] = c.pretty_data
+    let type = FieldType.string
+    let unit = ""
+    if (c?.data && c?.data.length > 0) {
+      values = c.data
+      type = FieldType.number
+      unit = c.unit == "number" ? "" : c.unit ?? ""
+    }
+    if (c.unit === "epoch") {
+      values = c.data.map(f=> f? f*1000: null)
+      type = FieldType.time
+    }
+
+    //this is what grafana uses for bytes (EIC) aka 1024
+    if (unit == "iB"){
+      unit = 'bytes'
+    }
+    if (unit == "iB/s"){
+      unit = 'bytes/s'
+    }
+    fields.push({
+      name: `${c?.label}`,
+      type,
+      values,
+      config: {unit}
+    })
+  })
 
   target.includedMetaData?.forEach(md=> {
     switch (md) {

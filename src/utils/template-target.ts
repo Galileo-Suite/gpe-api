@@ -1,7 +1,6 @@
 import { GpeQuery, defaultGpeQuery } from '../types';
 import { ScopedVars } from '@grafana/data';
 import defaults from 'lodash.defaults';
-import { sr } from 'date-fns/locale';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
 
@@ -16,7 +15,7 @@ export const applyGrafanaVars = <T>(object: T, scopedVars: ScopedVars ): T => {
   Object.values(scopedVars).forEach(v => {
     if (v.value) {
       const value = replacefunc(v.value)
-      str = str.replaceAll('$'+v.text, value)
+      str = str.replace('$'+v.text, value)
     }
   });
 
