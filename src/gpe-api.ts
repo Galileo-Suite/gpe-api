@@ -88,7 +88,7 @@ export class GpeApi {
     )).flat()
     const frames = await executeTransforms(Mutableframes, transformations)
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
-    return {hcOptions, frames}
+    return hcOptions
   }
 
   getPanelByKey = (key: string, dashboard: GrafanaDashboard) => {
@@ -125,7 +125,6 @@ export class GpeApi {
 
     const scopedVars:ScopedVars = {}
     const transformations = panel.transformations ?? []
-    const {hcOptions, frames} = await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
-    return {hcOptions, frames}
+    return await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
   }
 }
