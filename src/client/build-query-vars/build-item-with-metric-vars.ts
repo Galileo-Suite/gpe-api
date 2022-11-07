@@ -1,6 +1,7 @@
 import { GpeQuery } from '../../types/query';
 import { ItemsWithMetricsQueryVariables } from '../queries/queries';
 import { buildSelectorVars } from './build-selector-vars'
+import { buildSummaryVars } from './build-summary-vars'
 
 
 export const buildItemWithMetricsVars = (
@@ -16,6 +17,7 @@ export const buildItemWithMetricsVars = (
 
   let vars: ItemsWithMetricsQueryVariables = {
     ...buildSelectorVars(target),
+    ...buildSummaryVars(target),
 
     configs: configs ?? [],
     formulas: formulas?.map(f=>typeof f === 'string'? f : f.formula).filter(f=>f !== "" ) ?? [], // incase user inputs empty string, if user add a formula but doesn't type anything
@@ -23,11 +25,6 @@ export const buildItemWithMetricsVars = (
     epoch_start,
     epoch_end,
   };
-
-
-  if (vars.samples) {
-    vars.summary = null;
-  }
 
   return vars;
 };
