@@ -34,7 +34,6 @@ export interface GpeTarget {
   vis_id: string[]
   filters: string
   function: "AVG" | "MAX" | "MIN"
-
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}

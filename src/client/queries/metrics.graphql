@@ -72,8 +72,6 @@ fragment Metrics on Item {
     samples: $samples
   ) {
     start_epoch
-    pretty_data
-    display_data
     summary
     formula
     data

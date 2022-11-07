@@ -108,7 +108,6 @@ export type Metric = {
   alias?: Maybe<Scalars['String']>;
   data: Array<Maybe<Scalars['Float']>>;
   display_data: Array<Maybe<Scalars['String']>>;
-  forecast?: Maybe<Forecast>;
   formula?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   /** item identifiers */

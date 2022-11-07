@@ -51,7 +51,6 @@ query Visualization(
       label
       unit
       data
-      display_data
       pretty_data
     }
   }
