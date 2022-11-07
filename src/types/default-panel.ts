@@ -7,10 +7,10 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
     title: "",
     enabled: true,
     useDarkTheme: false,
-    usePanelDimensions: false,
-    tooltip: {
-      pointFormat: '{point.custom.prettyValue} {point.custom.unit}'
-    },
+    usePanelDimensions: true,
+    tooltipFormat:'{point.name}: {point.custom.pretty}',
+    labelFormat:'{point.name}: {point.custom.pretty}',
+    legendFormat:'{point.name}',
     options3dEnabled: false,
     alpha3d: 45,
     beta3d: 0,
@@ -46,6 +46,16 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   },
   highchartBarOptions: {
     enabled:true
+  },
+  highchartItemOptions: {
+    enabled: true,
+    innerSize: 40,
+    startAngle: -90,
+    endAngle: 90,
+    marker: 'square',
+    shape: 'rectangle',
+    totalCount: 100,
+    rows: 10
   },
   HighchartJsonOverrideOptions: {
     enabled:true,

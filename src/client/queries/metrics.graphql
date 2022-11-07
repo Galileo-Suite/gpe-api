@@ -1,25 +1,40 @@
 query ItemsWithMetrics(
-  $epoch_start: Int!,
-  $epoch_end: Int!,
-  $types: [String!],
-  $tags: [String!],
-  $custom_tags: [String!],
-  $item_ids: [ID!],
-  $related_to_types: [String!]!,
-  $related_to_tags: [String!],
-  $related_to_custom_tags: [String!],
-  $related_to_item_ids: [ID!],
-  $configs: [String!]!,
-  $formulas: [String!]!,
-  $summary: Int,
+  $epoch_start: Int!
+  $epoch_end: Int!
+  $types: [String!]
+  $tags: [String!]
+  $custom_tags: [String!]
+  $item_ids: [ID!]
+  $item_regex: String
+  $related_to_types: [String!]
+  $related_to_tags: [String!]
+  $related_to_custom_tags: [String!]
+  $related_to_item_ids: [ID!]
+  $related_to_item_regex: String
+  $configs: [String!]!
+  $formulas: [String!]!
+  $summary: Int
   $samples: Int
+  $use_forecast: Boolean!
+  $frequency: String
+  $periods: Int
+  $flexibility: Float
 ) {
   items(
-    types: $types
-    tags: $tags
-    custom_tags: $custom_tags
-    item_ids: $item_ids
-    related_to: [{types: $related_to_types, tags: $related_to_tags, item_ids: $related_to_item_ids, custom_tags: $related_to_custom_tags}]
+   selector:[{
+      custom_tags: $custom_tags
+      types: $types
+      tags: $tags
+      item_ids: $item_ids
+      item_regex: $item_regex
+      related_to: [{
+        custom_tags: $related_to_custom_tags
+        types: $related_to_types
+        tags: $related_to_tags
+        item_ids: $related_to_item_ids
+        item_regex: $related_to_item_regex
+    	}]
+    }]
     epoch_start: $epoch_start
     epoch_end: $epoch_end
   ) {
@@ -61,11 +76,28 @@ fragment Metrics on Item {
     samples: $samples
   ) {
     start_epoch
+    pretty_data
     summary
     formula
     data
+    ...MetricsForecast @include(if: $use_forecast)
     __typename
   }
   __typename
+}
+
+fragment MetricsForecast on Metric {
+  forecast(opts:{
+    frequency: $frequency,
+    periods: $periods,
+    flexibility: $flexibility
+  }) {
+    actual
+    time
+    forecast
+    upper
+    lower
+	}
+
 }
 

@@ -3,7 +3,7 @@ import { Metric, Config, ItemsWithMetricsDocument } from '../queries/queries'
 import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
-import { GpeQuery } from '../../types';
+import { Formula, GpeQuery } from '../../types';
 
 import {itemFields, valueToField} from './utils/item-fields'
 
@@ -13,24 +13,95 @@ type Unarray<T> = T extends Array<infer U> ? U : T;
 type SmallMetrics = Unarray<SmallItems>['metrics']
 type SmallConfigs = Unarray<SmallItems>['configs']
 
-const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix=""): FieldDTO<number | null>[] => {
+export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: GpeQuery['formulas']): FieldDTO<number | string | null>[] => {
   if (metrics.length == 0 ) {
     return []
   }
 
-  return metrics.map(m=>{
-    let values = m.data
+  const returnMetrics:FieldDTO<number | null | string>[] = []
+  metrics.forEach(m=>{
+    let values: (string | number | null)[] = m.pretty_data
+    let type = FieldType.string
+    let unit = ""
+    if (m?.data && m?.data.length > 0) {
+      values = m.data
+      type = FieldType.number
+    }
+    if (m.unit === "epoch") {
+      values = m.data.map(f=> f? f*1000: null)
+      type = FieldType.time
+    }
     if (values.length === 0 ) {
       values = new Array(l).fill(null)
     }
-    return {
-      name: `${prefix? prefix+'_' : ''}${m.formula}`,
-      values, type: FieldType.number, config:{custom:{summary: m.summary}}
+
+    //this is what grafana uses for bytes (EIC) aka 1024
+    if (unit == "iB"){
+      unit = 'bytes'
+    }
+    if (unit == "iB/s"){
+      unit = 'bytes/s'
+    }
+    if (m.unit == "number") {
+      unit = ""
+    }
+
+    //finding the target that matches current formula
+    const formula = formulas?.find(f=>typeof f ==='object' ? f.formula === m.formula : false )
+
+    let name = `${prefix? prefix+'_' : ''}${m.formula}`
+    if ('label' in m && m.label && m.label !== '') {
+      name = m.label
+    }
+    if (typeof formula === 'object' && formula?.nameAs) {
+      name = formula.nameAs
+    }
+
+    returnMetrics.push({
+      name,
+      values,
+      type, config:{custom:{summary: m.summary}, unit}
+    })
+
+    const forecast = m.forecast
+    if (forecast){
+      returnMetrics.pop() //use forecast acutal because it has the extra null that make the field the right hight to match the time col
+      returnMetrics.shift() // remove time array
+      returnMetrics.unshift({ // add time array from forecast
+        name:'time',
+        values: forecast.time.map(f=>(f??0)*1000),
+        type: FieldType.time
+      })
+      returnMetrics.push({
+        name,
+        values: forecast?.actual,
+        type: FieldType.number,
+         config:{custom:{summary: m.summary}, unit},
+      })
+      returnMetrics.push({
+        name:`${name}_forecast`,
+        values: forecast.forecast,
+        type: FieldType.number,
+        config:{custom:{summary: m.summary, unit}}
+      })
+      returnMetrics.push({
+        name:`${name}_lower`,
+        values: forecast.lower,
+        type: FieldType.number,
+        config:{custom:{summary: m.summary, unit}}
+      })
+      returnMetrics.push({
+        name:`${name}_uppper`,
+        values: forecast.upper,
+        type: FieldType.number,
+        config:{custom:{summary: m.summary, unit}}
+      })
     }
   })
+  return returnMetrics
 }
 
-const itemToConfigFields = (configs: SmallConfigs, l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
+const itemToConfigFields = (configs: Config[], l?: number, prefix: string= ""): FieldDTO<string | null>[] => {
   if (configs.length == 0 ) {
     return []
   }
@@ -51,30 +122,31 @@ const itemToConfigFields = (configs: SmallConfigs, l?: number, prefix: string= "
   })
 }
 
-const itemToTimeField = (item:Unarray<SmallItems>, l = 1): FieldDTO<any>[]  => {
+const itemToTimeField = (item: Unarray<SmallItems>, l = 1): FieldDTO<any>[]  => {
   let data: SmallMetrics | SmallConfigs
   if ('metrics' in item && item.metrics.length > 0) {
-    data = item.metrics as SmallMetrics
+    data = item.metrics
   } else if ('configs' in item && item.configs.length > 0 ) {
     data = item.configs
   } else {
-    data = []
-  }
-
-  if (data.length == 0 ) {
     return []
   }
-  let d = data[0]
 
-  if (d.__typename === 'Metric' || d.__typename === 'Config') {
-    const m = d as Metric | Config
-    const timeValues = new Array(l).fill(null).map((_,i)=>  {
-      return  (m.start_epoch??Date.now()/1000 - 24*60*60)*1000 + i*(m.summary??300)*1000
-    })
-    const time = { name: 'time',  values: timeValues, type: FieldType.time }
-    return [time]
+  const d = data[0]
+
+  const timeValues: (number | null)[] = new Array(l).fill(null).map((_,i)=>  {
+    return  (d.start_epoch??Date.now()/1000 - 24*60*60)*1000 + i*(d.summary??300)*1000
+  })
+  let time = [{ name: 'time',  values: timeValues, type: FieldType.time }]
+
+  if (d.__typename === 'Metric') {
+    const forecast = d.forecast
+    if (forecast){
+      const timeValues = forecast.time.map(t=>t? t*1000 : null)
+      time = [{ name: 'time',  values: timeValues, type: FieldType.time }]
+    }
   }
-  return []
+  return time
 }
 
 export const metricsToDataFrames = (items: SmallItems | null | undefined, target: Partial<GpeQuery>): MutableDataFrame<any>[]  => {
@@ -103,11 +175,8 @@ export const metricsToDataFrames = (items: SmallItems | null | undefined, target
     }
     fields.push(
       ...itemToTimeField(i, l),
-      ...itemToConfigFields(i.configs, l, i.item_type)
-    )
-
-    fields.push(
-      ...itemToMetricFields(i.metrics, l, i.item_type),
+      ...itemToConfigFields(i.configs, l),
+      ...MetricFields(i.metrics, l, undefined, target.formulas)
     )
 
     target.includedMetaData?.forEach(md=> {

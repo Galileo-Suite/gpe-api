@@ -1,11 +1,12 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsDocument, VisualizationDocument, TransientsDocument} from './client/queries/queries'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange, getDefaultTimeRange } from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange } from '@grafana/data'
 import { GpeQuery,GrafanaDashboard, Panel } from './types';
 
-import { buildItemWithMetricsVars, templateTarget } from './utils/build-item-with-metric-vars';
-import { buildTransientVars } from './utils/build-transient-vars';
-import {buildVisualizationVars} from './utils/build-visualization-vars'
+import { buildItemWithMetricsVars } from './client/build-query-vars/build-item-with-metric-vars';
+import { templateTarget } from './utils/template-target'
+import { buildTransientVars } from './client/build-query-vars/build-transient-vars';
+import { buildVisualizationVars } from './client/build-query-vars/build-visualization-vars'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './panel-to-highchart/highchart-object-from-data-panel-options';
@@ -20,6 +21,7 @@ type GpeRange = {
   epoch_start: number
   epoch_end: number
 }
+
 
 export class GpeApi {
   public client: ReturnType<typeof makeNodeApolloClient>
@@ -86,7 +88,7 @@ export class GpeApi {
     )).flat()
     const frames = await executeTransforms(Mutableframes, transformations)
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
-    return hcOptions
+    return {hcOptions, frames}
   }
 
   getPanelByKey = (key: string, dashboard: GrafanaDashboard) => {
@@ -98,12 +100,17 @@ export class GpeApi {
     return panel
   }
 
-  createChartFromPanel = async (panel: Panel, range?: GrafanaDashboard['time'], scopedVars?: ScopedVars) => {
-    if (range === undefined) {
+  createChartFromPanel = async (panel: Panel, time?: GrafanaDashboard['time'], scopedVars?: ScopedVars) => {
+    if (time === undefined) {
       console.log('range was undefiend, please define it something like ', {from: 'now-1d', to:'now'})
       return;
     }
-    const {timeRange} = applyPanelTimeOverrides(panel, getDefaultTimeRange())
+    const dashboardTimeRange: TimeRange = {
+      from: dateTimeParse(time.from),
+      to: dateTimeParse(time.to),
+      raw: time
+    }
+    const {timeRange} = applyPanelTimeOverrides(panel, dashboardTimeRange)
 
     const transformations = panel.transformations ?? []
     return await this.mockGrafana(panel.targets, transformations, panel.options, timeRange, scopedVars)
@@ -118,6 +125,7 @@ export class GpeApi {
 
     const scopedVars:ScopedVars = {}
     const transformations = panel.transformations ?? []
-    return await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
+    const {hcOptions, frames} = await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
+    return {hcOptions, frames}
   }
 }

@@ -1,6 +1,6 @@
 import Highcharts from 'highcharts'
 
-export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom'
+export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom' | 'item'
 
 export type HighchartOptions = {
   [key in SupportedHighchartsTypes]: Highcharts.Options
@@ -9,20 +9,19 @@ export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
 }
 
-export type ToolTipPanleOptions = {
-  pointFormat: string
-}
-
 export type HighchartsPanelGlobalOptions = {
+  unit?: string
   enabled: boolean
   useDarkTheme?: boolean
   usePanelDimensions?: boolean
-  tooltip: ToolTipPanleOptions
   title:  string
   options3dEnabled: boolean
   alpha3d?: number
   beta3d?: number
   depth3d?: number
+  tooltipFormat: string
+  labelFormat: string
+  legendFormat: string
 }
 
 export type HighchartLineOptions = {
@@ -58,6 +57,20 @@ export type HighchartsBarOptions = {
   enabled: boolean
 }
 
+export type MarkerTypes = 'square' | 'triangle' | 'circle' | 'diamond'
+export type TypeShapes = 'arc' | 'rectangle'
+
+export type HighchartsItemOptions = {
+  enabled: boolean
+  marker: MarkerTypes
+  shape: TypeShapes
+  innerSize: number
+  startAngle: number
+  endAngle?: number
+  totalCount?: number
+  rows?: number
+}
+
 export type HighchartJsonOverrideOptions = {
   enabled: boolean
   hcOptions: Highcharts.Options
@@ -70,6 +83,7 @@ export interface HighchartsPanelOptions {
   highchartLineOptions: HighchartLineOptions
   highchartPieOptions: HighchartsPieOptions
   highchartBarOptions: HighchartsBarOptions
+  highchartItemOptions: HighchartsItemOptions
   HighchartJsonOverrideOptions: HighchartJsonOverrideOptions
 }
 
