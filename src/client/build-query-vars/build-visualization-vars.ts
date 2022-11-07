@@ -10,6 +10,11 @@ export const buildVisualizationVars = (
   const {
     vis_id,
     filters,
+
+    use_forecast,
+    frequency,
+    periods,
+    flexibility,
   } = target;
 
   let vars: VisualizationQueryVariables = {
@@ -22,6 +27,11 @@ export const buildVisualizationVars = (
 
     epoch_start,
     epoch_end,
+
+    use_forecast: use_forecast ?? false,
+    frequency,
+    periods,
+    flexibility,
   };
 
   return vars;

@@ -17,6 +17,7 @@ const itemToMetricFields = (metrics: SmallMetrics, l = 1, prefix="", formulas?: 
   if (metrics.length == 0 ) {
     return []
   }
+  console.log(metrics)
 
   return metrics.map(m=>{
     let values = m.data
