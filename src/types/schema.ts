@@ -127,6 +127,7 @@ export type Metric = {
   data: Array<Maybe<Scalars['Float']>>;
   forecast?: Maybe<Forecast>;
   formula?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
   /** item identifiers */
   item_id?: Maybe<Scalars['String']>;
   item_name?: Maybe<Scalars['String']>;
@@ -147,16 +148,9 @@ export type MetricForecastArgs = {
   opts?: InputMaybe<ForecastOpts>;
 };
 
-export type MetricInput = {
-  data: Array<InputMaybe<Scalars['Float']>>;
-  start_epoch?: InputMaybe<Scalars['Float']>;
-  summary?: InputMaybe<Scalars['Float']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   chart?: Maybe<Chart>;
-  forecast?: Maybe<Forecast>;
   items: Array<Item>;
   type_ahead: TypeAhead;
 };
@@ -168,12 +162,6 @@ export type QueryChartArgs = {
   options?: InputMaybe<VisOptions>;
   selector: Array<Selector>;
   vis_id: Scalars['String'];
-};
-
-
-export type QueryForecastArgs = {
-  metric?: InputMaybe<MetricInput>;
-  opts?: InputMaybe<ForecastOpts>;
 };
 
 
