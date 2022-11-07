@@ -10,6 +10,8 @@ export const buildItemWithMetricsVars = (
   let {
     configs,
     formulas,
+    summary,
+    samples,
   } = target;
 
   let vars: ItemsWithMetricsQueryVariables = {
@@ -19,11 +21,6 @@ export const buildItemWithMetricsVars = (
     formulas: formulas?.map(f=>typeof f === 'string'? f : f.formula).filter(f=>f !== "" ) ?? [], // incase user inputs empty string, if user add a formula but doesn't type anything
     summary,
     samples,
-
-    use_forecast: use_forecast ?? false,
-    frequency,
-    periods,
-    flexibility,
 
     epoch_start,
     epoch_end,
