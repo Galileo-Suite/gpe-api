@@ -1,7 +1,6 @@
 import { GpeQuery } from '../../types/query';
 import { TransientsQueryVariables } from '../queries/queries';
 import {buildSelectorVars} from './build-selector-vars'
-import { buildSummaryVars } from './build-summary-vars'
 
 export const buildTransientVars = (
   target: Partial<GpeQuery>,
@@ -17,7 +16,6 @@ export const buildTransientVars = (
 
   let vars: TransientsQueryVariables = {
     ...buildSelectorVars(target),
-    ...buildSummaryVars(target),
 
     // emptys
     configs: configs ?? [],
@@ -28,6 +26,10 @@ export const buildTransientVars = (
     epoch_start,
     epoch_end,
   };
+
+  if (vars.samples) {
+    vars.summary = null;
+  }
 
   if (vars.transient_type !== '' && transient_fields?.length === 0) {
     throw new Error('must select values for transient if selecting transient type')

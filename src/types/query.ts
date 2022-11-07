@@ -18,8 +18,8 @@ export interface GpeTarget {
   item_regex: string;
   formulas: (Formula | string)[];
   configs: string[];
-  summary: number | null | string;
-  samples: number | null | string;
+  summary: number | null;
+  samples: number | null;
 
   related_to_types: string[];
   related_to_tags: string[];
