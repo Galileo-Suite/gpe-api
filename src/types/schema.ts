@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type Chart = {
   __typename?: 'Chart';
-  columns: Array<Maybe<Metric>>;
+  columns: Array<Metric>;
   title?: Maybe<Scalars['String']>;
 };
 
@@ -26,6 +26,24 @@ export type Config = {
   summary: Scalars['Int'];
   tuple?: Maybe<Array<StringTuple>>;
   value?: Maybe<Scalars['String']>;
+};
+
+export type Forecast = {
+  __typename?: 'Forecast';
+  actual: Array<Maybe<Scalars['Float']>>;
+  forecast: Array<Maybe<Scalars['Float']>>;
+  lower: Array<Maybe<Scalars['Float']>>;
+  time: Array<Maybe<Scalars['Float']>>;
+  upper: Array<Maybe<Scalars['Float']>>;
+};
+
+export type ForecastOpts = {
+  /** Higher corresponds to tighter fit, defaults to 0.05 */
+  flexibility?: InputMaybe<Scalars['Float']>;
+  /** Count then unit example 30D (units are S M H D) defaults to D (1 day) */
+  frequency?: InputMaybe<Scalars['String']>;
+  /** Number of points at that frequency defaults to 30 */
+  periods?: InputMaybe<Scalars['Int']>;
 };
 
 export type Item = {
@@ -107,9 +125,8 @@ export type Metric = {
   __typename?: 'Metric';
   alias?: Maybe<Scalars['String']>;
   data: Array<Maybe<Scalars['Float']>>;
-  display_data: Array<Maybe<Scalars['String']>>;
+  forecast?: Maybe<Forecast>;
   formula?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
   /** item identifiers */
   item_id?: Maybe<Scalars['String']>;
   item_name?: Maybe<Scalars['String']>;
@@ -125,9 +142,21 @@ export type Metric = {
   unit?: Maybe<Scalars['String']>;
 };
 
+
+export type MetricForecastArgs = {
+  opts?: InputMaybe<ForecastOpts>;
+};
+
+export type MetricInput = {
+  data: Array<InputMaybe<Scalars['Float']>>;
+  start_epoch?: InputMaybe<Scalars['Float']>;
+  summary?: InputMaybe<Scalars['Float']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   chart?: Maybe<Chart>;
+  forecast?: Maybe<Forecast>;
   items: Array<Item>;
   type_ahead: TypeAhead;
 };
@@ -139,6 +168,12 @@ export type QueryChartArgs = {
   options?: InputMaybe<VisOptions>;
   selector: Array<Selector>;
   vis_id: Scalars['String'];
+};
+
+
+export type QueryForecastArgs = {
+  metric?: InputMaybe<MetricInput>;
+  opts?: InputMaybe<ForecastOpts>;
 };
 
 

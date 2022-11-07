@@ -18,8 +18,8 @@ export interface GpeTarget {
   item_regex: string;
   formulas: (Formula | string)[];
   configs: string[];
-  summary: number | null;
-  samples: number | null;
+  summary: number | null | string;
+  samples: number | null | string;
 
   related_to_types: string[];
   related_to_tags: string[];
@@ -34,6 +34,11 @@ export interface GpeTarget {
   vis_id: string[]
   filters: string
   function: "AVG" | "MAX" | "MIN"
+
+  use_forecast: boolean
+  frequency: string
+  periods: string
+  flexibility: string
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -65,7 +70,12 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
 
   vis_id: [],
   filters: "",
-  function: "AVG"
+  function: "AVG",
+
+  use_forecast: false,
+  frequency: '1D',
+  periods: '30',
+  flexibility:' 0.05',
 };
 
 
