@@ -13,11 +13,6 @@ export const buildItemWithMetricsVars = (
     configs,
     formulas,
 
-    use_forecast,
-    frequency,
-    periods,
-    flexibility,
-
   } = target;
 
   let vars: ItemsWithMetricsQueryVariables = {
