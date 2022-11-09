@@ -1,4 +1,4 @@
-import { HighchartsPanelOptions } from '../../types'
+import { HighchartsOptions, HighchartsPanelOptions } from '../../types'
 import Highcharts from 'highcharts'
 import { DataFrame } from '@grafana/data'
 import { lineFromDataFrame } from './line-from-dataframe'
@@ -46,61 +46,63 @@ const getColumnOps = (panelOptions: HighchartsPanelOptions['highchartLineOptions
   }
 }
 
-export const lineFromPanelOptions = (panelOptions: HighchartsPanelOptions['highchartLineOptions'], dataframes: DataFrame[]): Highcharts.Options => {
-  if (panelOptions.enabled === false) {
+export const lineFromPanelOptions = (dataframes: DataFrame[], options: HighchartsPanelOptions): HighchartsOptions => {
+  const {highchartLineOptions} = options
+
+  if (highchartLineOptions.enabled === false) {
     return {};
   }
 
-  const hcOptions: Highcharts.Options = {
+  const hcOptions: HighchartsOptions = {
     xAxis: {
       type: 'datetime'
     }
   }
 
-  const series = lineFromDataFrame(dataframes)
-  hcOptions.series = series as Highcharts.SeriesOptionsType[]
+  const series = lineFromDataFrame(dataframes, options)
+  hcOptions.series = series
 
   hcOptions.chart = {...hcOptions.chart}
-  hcOptions.chart.type = getChartType(panelOptions)
+  hcOptions.chart.type = getChartType(highchartLineOptions)
 
   merge(hcOptions, {
     plotOptions: {
       series: {
-        lineWidth: panelOptions.lineWidth,
+        lineWidth: highchartLineOptions.lineWidth,
         marker: {
-          enabled: panelOptions.marker,
-          radius: panelOptions.markerRadius,
+          enabled: highchartLineOptions.marker,
+          radius: highchartLineOptions.markerRadius,
           symbol: 'circle'
         },
-        shadow: getShadow(panelOptions),
-        ...getColumnOps(panelOptions)
+        shadow: getShadow(highchartLineOptions),
+        ...getColumnOps(highchartLineOptions)
       },
       line: {
-        stacking: panelOptions.stacking
+        stacking: highchartLineOptions.stacking
       },
       column: {
-        stacking: panelOptions.stacking,
-        opacity: panelOptions.opacity
+        stacking: highchartLineOptions.stacking,
+        opacity: highchartLineOptions.opacity
       },
       area: {
-        stacking: panelOptions.stacking,
-        fillOpacity: panelOptions.opacity
+        stacking: highchartLineOptions.stacking,
+        fillOpacity: highchartLineOptions.opacity
       },
       spline: {
-        stacking: panelOptions.stacking
+        stacking: highchartLineOptions.stacking
       },
       areaspline: {
-        stacking: panelOptions.stacking,
-        fillOpacity: panelOptions.opacity
+        stacking: highchartLineOptions.stacking,
+        fillOpacity: highchartLineOptions.opacity
       }
     }
   })
 
-  const selected = panelOptions.selectedSeries
+  const selected = highchartLineOptions.selectedSeries
 
   series.forEach(s => {
     if (selected === s.name) {
-      s = merge(s, {...panelOptions.seriesOptions})
+      s = merge(s, {...highchartLineOptions.seriesOptions})
     }
   })
   merge(hcOptions.series, series)
