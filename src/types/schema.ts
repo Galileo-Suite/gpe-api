@@ -38,11 +38,14 @@ export type Forecast = {
 };
 
 export type ForecastOpts = {
-  /** Higher corresponds to tighter fit, defaults to 0.05 */
-  flexibility?: InputMaybe<Scalars['Float']>;
-  /** Count then unit example 30D (units are S M H D) defaults to D (1 day) */
-  frequency?: InputMaybe<Scalars['String']>;
-  /** Number of points at that frequency defaults to 30 */
+  /** Number of forecast points per frequency interval */
+  cap?: InputMaybe<Scalars['Float']>;
+  /** Needs to be speficied when 'logistic' growth is specified */
+  floor?: InputMaybe<Scalars['Float']>;
+  freq?: InputMaybe<Scalars['String']>;
+  /** Can be set when 'logistic' growth is specified, but needs 'cap' to be defined as well */
+  modelParams?: InputMaybe<ModelParams>;
+  /** Can take S, M, H, D */
   periods?: InputMaybe<Scalars['Int']>;
 };
 
@@ -151,6 +154,30 @@ export type MetricInput = {
   data: Array<InputMaybe<Scalars['Float']>>;
   start_epoch?: InputMaybe<Scalars['Float']>;
   summary?: InputMaybe<Scalars['Float']>;
+};
+
+export type ModelParams = {
+  /** Can be 'linear', 'logistic', or 'flat' */
+  changepoint_prior_scale?: InputMaybe<Scalars['Float']>;
+  /** Default number of changepoints that Prophet places and determines automatically whether they are significant */
+  changepoint_range?: InputMaybe<Scalars['Float']>;
+  /** Fit of model, higher = more flexibility (and maybe overfitting) */
+  changepoints?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** Same as above, but for weekly trends */
+  daily_seasonality?: InputMaybe<Scalars['String']>;
+  growth?: InputMaybe<Scalars['String']>;
+  /** Adjusts the extent to which the seasonality model will fit the data */
+  interval_width?: InputMaybe<Scalars['Float']>;
+  /** Can be specified as a date or dates, i.e. changepoints=['2022-08-12'], where the trend is known to have changed */
+  n_changepoints?: InputMaybe<Scalars['Int']>;
+  /** Same as above, but for daily trends */
+  seasonality_mode?: InputMaybe<Scalars['String']>;
+  /** Can be 'additive' and 'multiplicative' */
+  seasonality_prior_scale?: InputMaybe<Scalars['Float']>;
+  /** Default is 'auto', but can be TRUE, FALSE, or a number. Specifies number of Fourier terms in the yearly trend */
+  weekly_seasonality?: InputMaybe<Scalars['String']>;
+  /** Range of existing data that changepoints are applied to (default to first 80% of data) */
+  yearly_seasonality?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {

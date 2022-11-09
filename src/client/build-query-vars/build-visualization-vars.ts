@@ -1,6 +1,6 @@
 import { GpeQuery } from '../../types/query';
 import { VisualizationQueryVariables } from '../queries/queries';
-import { buildForecastVars } from './build-forecast-vars';
+import { buildForecastOpts } from './build-forecast-vars';
 import { buildSelectorVars } from './build-selector-vars'
 import { buildSummaryVars } from './build-summary-vars'
 
@@ -16,7 +16,7 @@ export const buildVisualizationVars = (
   let vars: VisualizationQueryVariables = {
     ...buildSelectorVars({...target}),
     ...buildSummaryVars({...target}),
-    ...buildForecastVars({...target}),
+    ...buildForecastOpts({...target}),
 
     vis_id: (vis_id ?? [""])[0],
     filters,

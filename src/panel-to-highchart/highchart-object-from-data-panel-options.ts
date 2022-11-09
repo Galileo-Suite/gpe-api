@@ -80,6 +80,7 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       }
     })
   })
+  console.log(hcOptions)
   if ( !(options.globalOptions.unit === 'none' || (options.globalOptions.unit === undefined && !unitSpecified)) ) {
     outUnit = options.globalOptions.outUnit ? options.globalOptions.outUnit : findBestUnit(hcOptions, options.globalOptions.unit ?? 'iB' )
     optmizeUnitsHcOptions(hcOptions, outUnit)

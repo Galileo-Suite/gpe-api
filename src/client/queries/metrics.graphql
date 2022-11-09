@@ -16,9 +16,7 @@ query ItemsWithMetrics(
   $summary: Int
   $samples: Int
   $use_forecast: Boolean!
-  $frequency: String
-  $periods: Int
-  $flexibility: Float
+  $forecast_opts: ForecastOpts
 ) {
   items(
    selector:[{
@@ -87,17 +85,12 @@ fragment Metrics on Item {
 }
 
 fragment MetricsForecast on Metric {
-  forecast(opts:{
-    frequency: $frequency,
-    periods: $periods,
-    flexibility: $flexibility
-  }) {
+  forecast(opts:$forecast_opts) {
     actual
     time
     forecast
     upper
     lower
 	}
-
 }
 
