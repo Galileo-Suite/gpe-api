@@ -3,8 +3,11 @@ import { ScopedVars } from '@grafana/data';
 import defaults from 'lodash.defaults';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
-
-export const applyGrafanaVars = <T>(object: T, scopedVars: ScopedVars ): T => {
+const defaultTemplate = {
+  start:'$',
+  end: ''
+}
+export const applyGrafanaVars = <T extends object>(object: T, scopedVars: ScopedVars, template = defaultTemplate): T => {
   let str = JSON.stringify(object)
   const replacefunc = (v: string | string[]): string => {
     if (typeof v === 'string') {
@@ -15,7 +18,7 @@ export const applyGrafanaVars = <T>(object: T, scopedVars: ScopedVars ): T => {
   Object.values(scopedVars).forEach(v => {
     if (v.value) {
       const value = replacefunc(v.value)
-      str = str.replace('$'+v.text, value)
+      str = str.replaceAll(template.start+v.text+template.end, value)
     }
   });
 

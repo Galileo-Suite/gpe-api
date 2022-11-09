@@ -1,13 +1,14 @@
 import { HighchartsPanelOptions } from '../../types'
 import {DataFrame } from '@grafana/data'
-import Highcharts, { SeriesPieOptions } from 'highcharts'
 import { pieFromDataFrame } from '../pie/pie-from-dataframe';
+import { HighchartsOptions } from '../../types';
 
-export const itemFromPanelOptions = (highchartItemOptions: HighchartsPanelOptions['highchartItemOptions'], dataframes: DataFrame[]): Highcharts.Options => {
+export const itemFromPanelOptions = (dataframes: DataFrame[], options: HighchartsPanelOptions): HighchartsOptions => {
+  const {highchartItemOptions} = options
   if (highchartItemOptions.enabled === false) {
-    return {series: pieFromDataFrame(dataframes) as SeriesPieOptions[]};
+    return {series: pieFromDataFrame(dataframes, options)}
   }
-  const hcOptions: Highcharts.Options = {
+  const hcOptions: HighchartsOptions = {
     chart:{
       type:'item',
     },
@@ -40,7 +41,7 @@ export const itemFromPanelOptions = (highchartItemOptions: HighchartsPanelOption
   }
 
   //code to calulate totals give a total count, converts series to percent ints
-  const series = pieFromDataFrame(dataframes)
+  const series = pieFromDataFrame(dataframes, options)
   series.forEach(s=> s.data = s.data.sort((a,b) => (a.y??0) - (b.y??0)) ) //sort each series so they show nicely and for the remainder algo
   let {totalCount} = highchartItemOptions
   series.forEach(s=>{
@@ -66,7 +67,7 @@ export const itemFromPanelOptions = (highchartItemOptions: HighchartsPanelOption
     }
   })
 
-  hcOptions.series = series as SeriesPieOptions[]
+  hcOptions.series = series
 
   return hcOptions
 }

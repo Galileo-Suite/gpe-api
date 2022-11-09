@@ -1,16 +1,17 @@
 import Highcharts from 'highcharts'
+import { units } from '../utils/units'
 
 export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom' | 'item'
 
-export type HighchartOptions = {
-  [key in SupportedHighchartsTypes]: Highcharts.Options
-}
 export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
 }
 
 export type HighchartsPanelGlobalOptions = {
-  unit?: string
+  unit?: keyof typeof units
+  outUnit?: keyof typeof units
+  optimizeUnit: boolean
+  yAxisTitle: string
   enabled: boolean
   useDarkTheme?: boolean
   usePanelDimensions?: boolean
