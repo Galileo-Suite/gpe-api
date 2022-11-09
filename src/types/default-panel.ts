@@ -4,6 +4,8 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   key: '',
   highchartType: 'line',
   globalOptions: {
+    optimizeUnit: true,
+    yAxisTitle: 'title {unit}',
     title: "",
     enabled: true,
     useDarkTheme: false,

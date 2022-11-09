@@ -72,6 +72,7 @@ fragment Transient on Item {
     fields: $transient_fields
     where: $transient_where
   ) {
+    id
     start_epoch
     label
     data

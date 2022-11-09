@@ -1,12 +1,12 @@
 import { makeNodeApolloClient } from './client/make-node-apollo-client';
 import { ItemsWithMetricsDocument, VisualizationDocument, TransientsDocument} from './client/queries/queries'
-import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange } from '@grafana/data'
+import { DataTransformerConfig, ScopedVars, dateTimeParse, MutableDataFrame,TimeRange, getDefaultTimeRange } from '@grafana/data'
 import { GpeQuery,GrafanaDashboard, Panel } from './types';
 
 import { buildItemWithMetricsVars } from './client/build-query-vars/build-item-with-metric-vars';
 import { templateTarget } from './utils/template-target'
 import { buildTransientVars } from './client/build-query-vars/build-transient-vars';
-import { buildVisualizationVars } from './client/build-query-vars/build-visualization-vars'
+import {buildVisualizationVars} from './client/build-query-vars/build-visualization-vars'
 import { HighchartsPanelOptions } from './types';
 import { executeTransforms, } from './utils/execute-transforms';
 import { highchartObjectFromDataPanelOptions } from './panel-to-highchart/highchart-object-from-data-panel-options';
@@ -88,7 +88,7 @@ export class GpeApi {
     )).flat()
     const frames = await executeTransforms(Mutableframes, transformations)
     const hcOptions = highchartObjectFromDataPanelOptions(frames, panelOptions)
-    return {hcOptions, frames}
+    return hcOptions
   }
 
   getPanelByKey = (key: string, dashboard: GrafanaDashboard) => {
@@ -125,7 +125,6 @@ export class GpeApi {
 
     const scopedVars:ScopedVars = {}
     const transformations = panel.transformations ?? []
-    const {hcOptions, frames} = await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
-    return {hcOptions, frames}
+    return await this.mockGrafana(panel.targets, transformations, panel.options, time, scopedVars)
   }
 }
