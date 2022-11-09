@@ -1,13 +1,14 @@
-import { HighchartsPanelOptions } from '../../types'
+import { HighchartsOptions, HighchartsPanelOptions } from '../../types'
 import {DataFrame } from '@grafana/data'
 import Highcharts, { SeriesPieOptions } from 'highcharts'
 import { pieFromDataFrame } from './pie-from-dataframe';
 
-export const pieFromPanelOptions = (highchartPieOptions: HighchartsPanelOptions['highchartPieOptions'], dataframes: DataFrame[]): Highcharts.Options => {
+export const pieFromPanelOptions = (dataframes: DataFrame[], options: HighchartsPanelOptions): HighchartsOptions => {
+  const  {highchartPieOptions}= options
   if (highchartPieOptions.enabled === false) {
-    return {series: pieFromDataFrame(dataframes) as SeriesPieOptions[]};
+    return {series: pieFromDataFrame(dataframes, options)}
   }
-  const hcOptions: Highcharts.Options = {
+  const hcOptions: HighchartsOptions= {
     chart:{
       type:'pie',
       options3d: { }
@@ -31,7 +32,7 @@ export const pieFromPanelOptions = (highchartPieOptions: HighchartsPanelOptions[
   hcOptions.plotOptions.pie = pieOptions
   hcOptions.plotOptions.item = {...hcOptions.plotOptions.item, ...pieOptions}
 
-  const series = pieFromDataFrame(dataframes)
+  const series = pieFromDataFrame(dataframes, options)
   let selected:string[] = []
   if (highchartPieOptions.slicedOptions == 'all') {
     series.forEach(s=>s.data?.forEach(d=>selected.push(d.name)))
@@ -48,7 +49,7 @@ export const pieFromPanelOptions = (highchartPieOptions: HighchartsPanelOptions[
   })
 
   //doing this cuz i don't want type to bedefined there
-  hcOptions.series = series as SeriesPieOptions[]
+  hcOptions.series = series
 
   return hcOptions
 }
