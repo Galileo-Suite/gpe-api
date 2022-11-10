@@ -42,10 +42,12 @@ export const itemFromPanelOptions = (dataframes: DataFrame[], options: Highchart
 
   //code to calulate totals give a total count, converts series to percent ints
   const series = pieFromDataFrame(dataframes, options)
-  series.forEach(s=> s.data = s.data.sort((a,b) => (a.y??0) - (b.y??0)) ) //sort each series so they show nicely and for the remainder algo
+  series.forEach(s=> {
+    s.data = s.data.sort( (a,b) => (a.y ?? 0) - (b.y ?? 0))
+  }) //sort each series so they show nicely and for the remainder algo
   let {totalCount} = highchartItemOptions
   series.forEach(s=>{
-    const sum = s.data.map(d=>d.y ?? 0).reduce((a, b) => a + b, 0)
+    const sum = s.data.map(d=> d.y ?? 0).reduce((a, b) => a + b, 0)
     if (sum === 0 ) {return;}
     if (sum > 10000 ) { totalCount = totalCount ?? 10000 } // set the max items
     if (totalCount === undefined) { return; }
