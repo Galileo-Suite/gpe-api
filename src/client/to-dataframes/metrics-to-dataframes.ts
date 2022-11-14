@@ -65,7 +65,6 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
 
     const forecast = m.forecast
     if (forecast){
-      console.log(returnMetrics)
       returnMetrics.pop() //use forecast acutal because it has the extra null that make the field the right hight to match the time col
       returnMetrics.shift() // remove time array
       returnMetrics.unshift({ // add time array from forecast
