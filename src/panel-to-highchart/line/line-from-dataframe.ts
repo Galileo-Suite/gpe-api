@@ -17,10 +17,10 @@ export const lineFromDataFrame = (dataframes: DataFrame[], {globalOptions}: High
       let data: HighchartsDataPoint[] = []
       f.values.toArray().forEach((d:number,i)=> {
         if (time) { // user selects null -> set unit null, user leaves undefined -> set dataframe unit if exists otherwise null
-          data.push({x: time[i], y: d, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit }, name:''})
+          data.push([time[i], d])
         }
       })
-      let seriesDef: SimpleSeries = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'line'}
+      let seriesDef: SimpleSeries = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'line', custom:{ unit: setUnit === undefined?  unit ?? null : setUnit }}
       series.push(seriesDef)
     })
   })

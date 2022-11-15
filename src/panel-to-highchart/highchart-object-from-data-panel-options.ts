@@ -92,8 +92,9 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
     }
   }
 
-
   merge(hcOptions, {yAxis:[{title}]})
+
+  merge(hcOptions, {time:{timezone: options.globalOptions.timezone}})
 
   merge(hcOptions, options.HighchartJsonOverrideOptions.hcOptions)
 
