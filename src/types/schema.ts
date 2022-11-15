@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type Chart = {
   __typename?: 'Chart';
-  columns: Array<Maybe<Metric>>;
+  columns: Array<Metric>;
   title?: Maybe<Scalars['String']>;
 };
 
@@ -26,6 +26,27 @@ export type Config = {
   summary: Scalars['Int'];
   tuple?: Maybe<Array<StringTuple>>;
   value?: Maybe<Scalars['String']>;
+};
+
+export type Forecast = {
+  __typename?: 'Forecast';
+  actual: Array<Maybe<Scalars['Float']>>;
+  forecast: Array<Maybe<Scalars['Float']>>;
+  lower: Array<Maybe<Scalars['Float']>>;
+  time: Array<Maybe<Scalars['Float']>>;
+  upper: Array<Maybe<Scalars['Float']>>;
+};
+
+export type ForecastOpts = {
+  /** Number of forecast points per frequency interval */
+  cap?: InputMaybe<Scalars['Float']>;
+  /** Needs to be speficied when 'logistic' growth is specified */
+  floor?: InputMaybe<Scalars['Float']>;
+  freq?: InputMaybe<Scalars['String']>;
+  /** Can be set when 'logistic' growth is specified, but needs 'cap' to be defined as well */
+  modelParams?: InputMaybe<ModelParams>;
+  /** Can take S, M, H, D */
+  periods?: InputMaybe<Scalars['Int']>;
 };
 
 export type Item = {
@@ -107,9 +128,8 @@ export type Metric = {
   __typename?: 'Metric';
   alias?: Maybe<Scalars['String']>;
   data: Array<Maybe<Scalars['Float']>>;
-  display_data: Array<Maybe<Scalars['String']>>;
+  forecast?: Maybe<Forecast>;
   formula?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
   /** item identifiers */
   item_id?: Maybe<Scalars['String']>;
   item_name?: Maybe<Scalars['String']>;
@@ -125,9 +145,45 @@ export type Metric = {
   unit?: Maybe<Scalars['String']>;
 };
 
+
+export type MetricForecastArgs = {
+  opts?: InputMaybe<ForecastOpts>;
+};
+
+export type MetricInput = {
+  data: Array<InputMaybe<Scalars['Float']>>;
+  start_epoch?: InputMaybe<Scalars['Float']>;
+  summary?: InputMaybe<Scalars['Float']>;
+};
+
+export type ModelParams = {
+  /** Can be 'linear', 'logistic', or 'flat' */
+  changepoint_prior_scale?: InputMaybe<Scalars['Float']>;
+  /** Default number of changepoints that Prophet places and determines automatically whether they are significant */
+  changepoint_range?: InputMaybe<Scalars['Float']>;
+  /** Fit of model, higher = more flexibility (and maybe overfitting) */
+  changepoints?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** Same as above, but for weekly trends */
+  daily_seasonality?: InputMaybe<Scalars['String']>;
+  growth?: InputMaybe<Scalars['String']>;
+  /** Adjusts the extent to which the seasonality model will fit the data */
+  interval_width?: InputMaybe<Scalars['Float']>;
+  /** Can be specified as a date or dates, i.e. changepoints=['2022-08-12'], where the trend is known to have changed */
+  n_changepoints?: InputMaybe<Scalars['Int']>;
+  /** Same as above, but for daily trends */
+  seasonality_mode?: InputMaybe<Scalars['String']>;
+  /** Can be 'additive' and 'multiplicative' */
+  seasonality_prior_scale?: InputMaybe<Scalars['Float']>;
+  /** Default is 'auto', but can be TRUE, FALSE, or a number. Specifies number of Fourier terms in the yearly trend */
+  weekly_seasonality?: InputMaybe<Scalars['String']>;
+  /** Range of existing data that changepoints are applied to (default to first 80% of data) */
+  yearly_seasonality?: InputMaybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   chart?: Maybe<Chart>;
+  forecast?: Maybe<Forecast>;
   items: Array<Item>;
   type_ahead: TypeAhead;
 };
@@ -139,6 +195,12 @@ export type QueryChartArgs = {
   options?: InputMaybe<VisOptions>;
   selector: Array<Selector>;
   vis_id: Scalars['String'];
+};
+
+
+export type QueryForecastArgs = {
+  metric?: InputMaybe<MetricInput>;
+  opts?: InputMaybe<ForecastOpts>;
 };
 
 

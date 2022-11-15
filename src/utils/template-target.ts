@@ -1,6 +1,7 @@
 import { GpeQuery, defaultGpeQuery } from '../types';
 import { ScopedVars } from '@grafana/data';
 import defaults from 'lodash.defaults';
+import { sr } from 'date-fns/locale';
 
 const dup = <T>(p: T): T => JSON.parse(JSON.stringify(p));
 const defaultTemplate = {

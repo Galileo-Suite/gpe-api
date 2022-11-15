@@ -1,5 +1,6 @@
 
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
+import { ForecastOpts } from '../client';
 
 export type MetaFields = 'refid' | "item_id" | "type" | "tags" | "custom_tag" | undefined
 export type Formula = {formula:string, nameAs: string | null}
@@ -34,6 +35,9 @@ export interface GpeTarget {
   vis_id: string[]
   filters: string
   function: "AVG" | "MAX" | "MIN"
+
+  use_forecast: boolean
+  forecast: ForecastOpts
 }
 
 export interface GpeQuery extends GpeTarget, DataQuery {}
@@ -65,7 +69,32 @@ export const defaultGpeQuery: Omit<GpeQuery, 'refId'> = {
 
   vis_id: [],
   filters: "",
-  function: "AVG"
+  function: "AVG",
+
+  use_forecast: false,
+  forecast: {
+    freq: 'D',
+    periods: 30,
+    cap: null,
+    floor: null,
+
+    modelParams: {
+      growth:'linear',
+
+      changepoint_prior_scale: 0.05,
+      changepoints: null,
+      n_changepoints: 25,
+      changepoint_range:0.8,
+
+      yearly_seasonality:'auto',
+      weekly_seasonality:'auto',
+      daily_seasonality:'auto',
+
+      seasonality_mode:'additive',
+      seasonality_prior_scale:10,
+      interval_width:0.8,
+    }
+  }
 };
 
 
