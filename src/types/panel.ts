@@ -8,6 +8,7 @@ export type ConversionFunctions = {
 }
 
 export type HighchartsPanelGlobalOptions = {
+  timezone: string
   unit?: keyof typeof units
   outUnit?: keyof typeof units
   optimizeUnit: boolean

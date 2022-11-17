@@ -4,6 +4,7 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
   key: '',
   highchartType: 'line',
   globalOptions: {
+    timezone: 'America/New_York',
     optimizeUnit: true,
     yAxisTitle: 'title {unit}',
     title: "",
