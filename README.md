@@ -10,7 +10,6 @@ publish package
 npm publish --access=public
 ```
 
-
 # Explanation
 `gpe-api.ts` contains the entry point
 
