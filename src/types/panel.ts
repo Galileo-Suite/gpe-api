@@ -1,7 +1,7 @@
 import Highcharts from 'highcharts'
 import { units } from '../utils/units'
 
-export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom' | 'item'
+export type SupportedHighchartsTypes = 'line' | 'pie' | 'bar' | 'custom' | 'item' | 'forecast'
 
 export type ConversionFunctions = {
   [key in SupportedHighchartsTypes]: string
@@ -59,6 +59,10 @@ export type HighchartsBarOptions = {
   enabled: boolean
 }
 
+export type HighchartsForecastOptions = {
+
+}
+
 export type MarkerTypes = 'square' | 'triangle' | 'circle' | 'diamond'
 export type TypeShapes = 'arc' | 'rectangle'
 
@@ -86,6 +90,7 @@ export interface HighchartsPanelOptions {
   highchartPieOptions: HighchartsPieOptions
   highchartBarOptions: HighchartsBarOptions
   highchartItemOptions: HighchartsItemOptions
+  highchartForecastOptions: HighchartsForecastOptions
   HighchartJsonOverrideOptions: HighchartJsonOverrideOptions
 }
 

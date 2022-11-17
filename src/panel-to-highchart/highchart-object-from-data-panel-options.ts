@@ -7,6 +7,7 @@ import { HighchartsPanelOptions, defaultHighchartsPanelOptions, HighchartsOption
 import {lineFromPanelOptions} from './line/line-from-panel-options'
 import {pieFromPanelOptions} from './pie/pie-from-panel-options'
 import {itemFromPanelOptions} from './item/item-from-panel-options'
+import {forecastFromPanelOptions} from './forecast/forecast-from-panel-options'
 import {applyGrafanaVars} from '../utils'
 
 const defaultPlotOptions = {
@@ -62,6 +63,9 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       break;
       case 'item':
       merge(hcOptions, {plotOptions:{item: defaultPlotOptions}}, itemFromPanelOptions(data, options))
+      break;
+      case 'forecast':
+      merge(hcOptions, {plotOptions:{forecast: defaultPlotOptions}}, forecastFromPanelOptions(data, options))
       break;
     default:
       throw new Error(`${options.highchartType} is not valid`)
