@@ -1,6 +1,6 @@
 
 import { Metric, Config, ItemsWithMetricsDocument } from '../queries/queries'
-import { MutableDataFrame, FieldType, FieldDTO } from '@grafana/data';
+import { MutableDataFrame, FieldType, FieldDTO ,FieldConfig} from '@grafana/data';
 
 import {ResultOf} from '@graphql-typed-document-node/core'
 import { Formula, GpeQuery } from '../../types';
@@ -57,15 +57,21 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
       name = formula.nameAs
     }
 
+    const config: FieldConfig = {
+      custom:{summary: m.summary},
+      unit,
+    }
+
     returnMetrics.push({
       name,
       values,
-      type, config:{custom:{summary: m.summary}, unit}
+      type,
+      config,
     })
 
     const forecast = m.forecast
     if (forecast){
-      returnMetrics.pop() //use forecast acutal because it has the extra null that make the field the right hight to match the time col
+      returnMetrics.pop() //use forecast actual because it has the extra null that make the field the right hight to match the time col
       returnMetrics.shift() // remove time array
       returnMetrics.unshift({ // add time array from forecast
         name:'time',
@@ -76,25 +82,25 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
         name,
         values: forecast?.actual,
         type: FieldType.number,
-         config:{custom:{summary: m.summary, unit, fcastKey: name}},
+        config,
       })
       returnMetrics.push({
         name:`${name}_forecast`,
         values: forecast.forecast,
         type: FieldType.number,
-        config:{custom:{summary: m.summary, unit, fcastKey: name}}
+        config,
       })
       returnMetrics.push({
         name:`${name}_lower`,
         values: forecast.lower,
         type: FieldType.number,
-        config:{custom:{summary: m.summary, unit, fcastKey: name}}
+        config,
       })
       returnMetrics.push({
         name:`${name}_uppper`,
         values: forecast.upper,
         type: FieldType.number,
-        config:{custom:{summary: m.summary, unit, fcastKey: name}}
+        config,
       })
     }
   })
