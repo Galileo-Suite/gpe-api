@@ -8,6 +8,11 @@ export type HighchartsDataPoint = HighchartsTuplePoint  | HighchartsObjectPoint
 export type SimpleSeries = Omit<Highcharts.SeriesOptions, 'data'> & {
   data: HighchartsDataPoint[]
   custom: pointCustom
+  color?: string
+  marker?: {
+    enabled?: boolean,
+    radius?: number
+  }
 }
 
 

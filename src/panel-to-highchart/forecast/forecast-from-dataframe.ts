@@ -21,12 +21,13 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
           data.push([time[i], d])
         }
       })
-      let fullName = getFieldDisplayName(f,frame,dataframes)
+      let fullName = getFieldDisplayName(f,frame,dataframes).replace(" ", "_")
+
+      console.log(fullName)
 
       const names = fullName.split('_') //everyihtng up to last '_'
       names.pop()
       const name = names.join('_') 
-      console.log(fullName)
       let seriesDef: SimpleSeries
 
       if (fullName.includes('lower')) {
@@ -51,7 +52,7 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
       } else if (fullName.includes('forecast')) {
         seriesDef = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'line', zIndex: 2, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name }}
       } else {
-        seriesDef = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'scatter', zIndex: 3, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name }}
+        seriesDef = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'scatter', zIndex: 3, marker: {enabled: true, radius: 1}, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name }}
       }
       series.push(seriesDef)
     })
