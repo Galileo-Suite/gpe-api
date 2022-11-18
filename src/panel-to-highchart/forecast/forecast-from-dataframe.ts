@@ -1,5 +1,6 @@
-import {DataFrame } from '@grafana/data'
+import {DataFrame, FieldConfig } from '@grafana/data'
 import { getFieldDisplayName } from '@grafana/data';
+import { keys } from 'highcharts';
 import { includes } from 'lodash';
 import {SimpleSeries, HighchartsDataPoint, HighchartsPanelOptions, HighchartsTuplePoint} from '../../types'
 
@@ -10,7 +11,7 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
   let time: number[] | null = null
   dataframes.forEach(frame=>{
     time = time ? time : frame.fields.find(f=>f.type=='time')?.values.toArray() as number[]
-    frame.fields.map(f => {
+    frame.fields.map((f) => {
       const unit = f.config.unit
       if( f.type !== 'number') {
         return;
@@ -21,22 +22,23 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
           data.push([time[i], d])
         }
       })
-      let fullName = getFieldDisplayName(f,frame,dataframes).replace(" ", "_")
+      
+      const key = f.config.custom.fcastKey
 
-      console.log(fullName)
+      const name = f.name
 
-      const names = fullName.split('_') //everyihtng up to last '_'
-      names.pop()
-      const name = names.join('_') 
+      const type = f.config.custom.fcastType
+
       let seriesDef: SimpleSeries
 
-      if (fullName.includes('lower')) {
+      if (type ==='lower') {
         return
       }
       
-      if (fullName.includes('uppper')) {
+      if (type === 'upper') {
         const upperdata = data
-        const lowerdata = frame.fields.find(f=>f.name === `${name}_lower`)?.values.toArray() as number[]
+        const lowerdata = frame.fields.find(f=>f.config?.custom?.fcastKey === key && f.config?.custom?.fcastType === 'lower')?.values.toArray() as number[]
+
 
         const rangedata = upperdata.map((d,i) => {
           return [d[0], lowerdata[i], d[1]]
@@ -44,15 +46,33 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
 
         seriesDef = {
           data: rangedata,// Add range data for upper and lower,
-          name: fullName,
+          name: name,
           type: 'arearange',
           zIndex: 1,
           custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name}
         }
-      } else if (fullName.includes('forecast')) {
-        seriesDef = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'line', zIndex: 2, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name }}
+      } else if (type === 'forecast') {
+        seriesDef = { 
+          data, 
+          name: getFieldDisplayName(f,frame, dataframes), 
+          type: 'line', 
+          zIndex: 3, 
+          custom:{ 
+            unit: setUnit === undefined?  unit ?? null : setUnit, 
+            key: key 
+          }
+        }
       } else {
-        seriesDef = { data, name: getFieldDisplayName(f,frame, dataframes), type: 'scatter', zIndex: 3, marker: {enabled: true, radius: 1}, custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name }}
+        seriesDef = {
+          data, 
+          name: getFieldDisplayName(f,frame, dataframes), 
+          type: 'scatter', 
+          zIndex: 2, 
+          marker: {enabled: true, radius: 1}, 
+          custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, 
+            key: key 
+          }
+        }
       }
       series.push(seriesDef)
     })

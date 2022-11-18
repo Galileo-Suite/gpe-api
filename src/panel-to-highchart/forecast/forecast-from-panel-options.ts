@@ -31,7 +31,7 @@ export const forecastFromPanelOptions = (dataframes: DataFrame[], options: Highc
 
   series.forEach(s => {
     console.log(s)
-    if (s.name?.includes('uppper')) {
+    if (s.name?.includes('upper')) {
       s.color = '#CAD2C533'
     } else if (s.name?.includes('forecast')) {
       s.color = '#5B618A'
