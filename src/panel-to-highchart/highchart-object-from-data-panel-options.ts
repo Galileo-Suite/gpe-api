@@ -7,16 +7,19 @@ import { HighchartsPanelOptions, defaultHighchartsPanelOptions, HighchartsOption
 import {lineFromPanelOptions} from './line/line-from-panel-options'
 import {pieFromPanelOptions} from './pie/pie-from-panel-options'
 import {itemFromPanelOptions} from './item/item-from-panel-options'
+import {forecastFromPanelOptions} from './forecast/forecast-from-panel-options'
 import {applyGrafanaVars} from '../utils'
 
 const defaultPlotOptions = {
   animation: {duration: 0}
 }
 
+export const defaultGlobalColors = ["#6883BA", "#8DB38B", "#FF6542", "#B7245C", "#F5BB00", "#372549", "#C2F970", "#8C2F39", "#F4CAE0"]
+
 export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: HighchartsPanelOptions) => {
   options = defaults(options, defaultHighchartsPanelOptions)
   let hcOptions: HighchartsOptions = {
-    colors: ["#6883BA", "#8DB38B", "#FF6542", "#B7245C", "#F5BB00", "#372549", "#C2F970", "#8C2F39", "#F4CAE0"],
+    colors: defaultGlobalColors,
     title:{
       text: options.globalOptions.title
     },
@@ -62,6 +65,9 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       break;
       case 'item':
       merge(hcOptions, {plotOptions:{item: defaultPlotOptions}}, itemFromPanelOptions(data, options))
+      break;
+      case 'forecast':
+      merge(hcOptions, {plotOptions:{forecast: defaultPlotOptions}}, forecastFromPanelOptions(data, options))
       break;
     default:
       throw new Error(`${options.highchartType} is not valid`)

@@ -58,7 +58,7 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
     }
 
     const config: FieldConfig = {
-      custom:{summary: m.summary},
+      custom:{summary: m.summary, fcastKey: (Math.random() + 1).toString(36).substring(7)},
       unit,
     }
 
@@ -82,25 +82,25 @@ export const MetricFields = (metrics: Metric[], l = 1, prefix="", formulas?: Gpe
         name,
         values: forecast?.actual,
         type: FieldType.number,
-        config,
+        config:{...config, custom:{...config.custom, fcastType: 'actual'}},
       })
       returnMetrics.push({
         name:`${name}_forecast`,
         values: forecast.forecast,
         type: FieldType.number,
-        config,
+        config:{...config, custom:{...config.custom, fcastType: 'forecast'}},
       })
       returnMetrics.push({
         name:`${name}_lower`,
         values: forecast.lower,
         type: FieldType.number,
-        config,
+        config:{...config, custom:{...config.custom, fcastType: 'lower'}},
       })
       returnMetrics.push({
-        name:`${name}_uppper`,
+        name:`${name}_upper`,
         values: forecast.upper,
         type: FieldType.number,
-        config,
+        config:{...config, custom:{...config.custom, fcastType: 'upper'}},
       })
     }
   })

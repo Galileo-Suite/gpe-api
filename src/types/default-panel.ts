@@ -47,6 +47,9 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
     groupPadding: 0.2,
     pointPadding: 0.1
   },
+  highchartForecastOptions: {
+
+  },
   highchartBarOptions: {
     enabled:true
   },
