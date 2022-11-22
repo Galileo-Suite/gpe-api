@@ -1,31 +1,34 @@
 import {DataFrame, FieldType, getFieldDisplayName } from '@grafana/data'
-import { SimpleSeries, HighchartsDataPoint, HighchartsPanelOptions } from '../../types'
+import { SimpleSeries, HighchartsDataPoint, HighchartsPanelOptions,HighchartsObjectPoint } from '../../types'
 
 
-type Opts = {setUnit?:string}
-export const pieFromDataFrame = (dataframes: DataFrame[], {globalOptions}: HighchartsPanelOptions): SimpleSeries[] => {
+export type PieSeries =  (Omit<SimpleSeries,'data'> & {data: HighchartsObjectPoint[]})
+
+export const pieFromDataFrame = (dataframes: DataFrame[], {globalOptions}: HighchartsPanelOptions): PieSeries[] => {
   const {unit: setUnit} = globalOptions
 
-  let series:  SimpleSeries[] = []
+  let series:  PieSeries[] = []
 
   //case when pie is streched across dataframe
   const allfieldsLengths = dataframes.map(d=>d.fields.map(f=>f.values.toArray().length)).flat()
   if (Math.max(...allfieldsLengths) === 1) {
+    let unit: string | null = null
     dataframes.forEach(frame=>{
-      const data: HighchartsDataPoint[] = frame.fields.map(f=> {
+      const data: HighchartsObjectPoint[] = frame.fields.map(f=> {
         const y:number = f.values.toArray()[0]
         const name = getFieldDisplayName(f,frame, dataframes)
-        let custom:any = {pretty: y, prettyValue: y, name, unit: setUnit === undefined? f.config.unit ?? null : setUnit}
+        unit =  setUnit === undefined? f.config.unit ?? null : setUnit
+        let custom: any = {pretty: y, prettyValue: y, name, unit}
         return {name, y, custom}
       } )
-      let seriesDef:  SimpleSeries = { data, type: 'pie' }
+      let seriesDef:  PieSeries = { data, type: 'pie', custom: {unit: setUnit === undefined? unit ?? null : setUnit} }
       series.push(seriesDef)
     })
     return series
   }
 
   dataframes.forEach(frame=>{
-    const data: HighchartsDataPoint[] = []
+    const data: HighchartsObjectPoint[] = []
     const labelField = frame.fields.find(f=> f.type === FieldType.string || Array.isArray(f.values.get(0)) )
     const valueField = frame.fields.find(f=> f.type === FieldType.number && !Array.isArray(f.values.get(0)))
     if (labelField === undefined ) {
@@ -46,7 +49,7 @@ export const pieFromDataFrame = (dataframes: DataFrame[], {globalOptions}: Highc
       })
     }
 
-    let seriesDef: SimpleSeries = { data, type:'pie'}
+    let seriesDef: PieSeries = { data, type:'pie',  custom: { unit: setUnit === undefined? valueField.config.unit ?? null : setUnit}}
     series.push(seriesDef)
   })
   return series

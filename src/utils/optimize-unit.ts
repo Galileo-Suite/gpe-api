@@ -1,4 +1,4 @@
-import { HighchartsOptions } from '../types'
+import { HighchartsOptions, isPointObjectData, isTupleData } from '../types'
 import { units } from './units'
 
 
@@ -33,10 +33,17 @@ export const getValueAndUnit = (bytes: number,tenOrtwo: 10 | 2 = 2):getValueAndU
 export const findBestUnit = (hcOptions: HighchartsOptions, unit: keyof typeof units) => {
   let max = 0
   hcOptions.series?.forEach(s=> {
-    s.data.forEach(d=> {
-      const num = convertToBase(d.y ?? null, d.custom.unit as keyof typeof units)
-      if (num !== null && num > max) { max = num }
-    })
+    if (isPointObjectData(s.data)) {
+      s.data.forEach(d=> {
+        const num = convertToBase(d.y ?? null, d.custom.unit as keyof typeof units)
+        if (num !== null && num > max) { max = num }
+      })
+    } else if (isTupleData(s.data)){
+      s.data.forEach(d=> {
+        const num = convertToBase(d[1] ?? null, s.custom.unit as keyof typeof units)
+        if (num !== null && num > max) { max = num }
+      })
+    }
   })
   return getValueAndUnit(max,unit.includes('i')? 2 : 10).unit
 }
@@ -47,14 +54,25 @@ export const findBestUnit = (hcOptions: HighchartsOptions, unit: keyof typeof un
 */
 export const optmizeHcOptions = (hcOptions: HighchartsOptions, outUnit: keyof typeof units) => {
   hcOptions.series?.forEach(s=> {
-    s.data.forEach(d=>{
-      if (d.custom.unit === null) {return;}
-      const base = convertToBase(d.y,  d.custom.unit as keyof typeof units)
-      if (base === null) {return;}
-      const factor = units[outUnit]
-      if ( factor === null) {return;}
-      d.y = base / factor
-    })
+    if (isPointObjectData(s.data)) {
+      s.data.forEach(d=>{
+        if (d.custom.unit === null) {return;}
+        const base = convertToBase(d.y,  d.custom.unit as keyof typeof units)
+        if (base === null) {return;}
+        const factor = units[outUnit]
+        if ( factor === null) {return;}
+        d.y = base / factor
+      })
+    } else if (isTupleData(s.data)){
+      s.data.forEach(d=>{
+        if (s.custom.unit === null) {return;}
+        const base = convertToBase(d[1],  s.custom.unit as keyof typeof units)
+        if (base === null) {return;}
+        const factor = units[outUnit]
+        if ( factor === null) {return;}
+        d[1] = base / factor
+      })
+    }
   })
   return hcOptions
 }
