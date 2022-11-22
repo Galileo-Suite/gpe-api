@@ -31,6 +31,11 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       pointFormat: undefined
     },
     plotOptions:{
+      series: {
+        animation: {
+          duration: 0
+        }
+      },
       pie: {
         depth: options.globalOptions.depth3d,
         dataLabels: {
@@ -58,7 +63,7 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
 
   switch (options.highchartType) {
     case 'line':
-      merge(hcOptions, {plotOptions:{line: defaultPlotOptions}}, lineFromPanelOptions(data, options))
+      merge(hcOptions, {plotOptions:{line: defaultPlotOptions, }}, lineFromPanelOptions(data, options))
       break;
       case 'pie':
       merge(hcOptions, {plotOptions:{pie: defaultPlotOptions}}, pieFromPanelOptions(data, options))
@@ -67,7 +72,7 @@ export const highchartObjectFromDataPanelOptions = (data: DataFrame[], options: 
       merge(hcOptions, {plotOptions:{item: defaultPlotOptions}}, itemFromPanelOptions(data, options))
       break;
       case 'forecast':
-      merge(hcOptions, {plotOptions:{forecast: defaultPlotOptions}}, forecastFromPanelOptions(data, options))
+      merge(hcOptions, {plotOptions:{arearange: defaultPlotOptions, areasplinerange: defaultPlotOptions, line: defaultPlotOptions, spline: defaultPlotOptions, scatter: defaultPlotOptions}}, forecastFromPanelOptions(data, options))
       break;
     default:
       throw new Error(`${options.highchartType} is not valid`)

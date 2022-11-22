@@ -46,7 +46,8 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
 
         seriesDef = {
           data: rangedata,// Add range data for upper and lower,
-          name: name,
+          // name: name,
+          name: getFieldDisplayName(f,frame,dataframes),
           type: 'arearange',
           zIndex: 1,
           custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, key: name}
@@ -56,7 +57,7 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
           data, 
           name: getFieldDisplayName(f,frame, dataframes), 
           type: 'line', 
-          zIndex: 3, 
+          zIndex: 2, 
           custom:{ 
             unit: setUnit === undefined?  unit ?? null : setUnit, 
             key: key 
@@ -67,12 +68,13 @@ export const forecastFromDataFrame = (dataframes: DataFrame[], {globalOptions}: 
           data, 
           name: getFieldDisplayName(f,frame, dataframes), 
           type: 'scatter', 
-          zIndex: 2, 
+          zIndex: 3, 
           marker: {enabled: true, radius: 1}, 
           custom:{ unit: setUnit === undefined?  unit ?? null : setUnit, 
             key: key 
           }
         }
+
       }
       series.push(seriesDef)
     })

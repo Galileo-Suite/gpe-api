@@ -48,7 +48,6 @@ export const defaultHighchartsPanelOptions: HighchartsPanelOptions = {
     pointPadding: 0.1
   },
   highchartForecastOptions: {
-
   },
   highchartBarOptions: {
     enabled:true

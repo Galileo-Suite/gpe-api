@@ -60,7 +60,18 @@ export type HighchartsBarOptions = {
 }
 
 export type HighchartsForecastOptions = {
-
+  rangeMarker?: boolean
+  forecastMarker?: boolean
+  marker?: boolean
+  markerRadius?: number
+  forecastLineWidth?: number
+  rangeLineWidth?: number
+  lineWidth?: number
+  showForecast?: boolean
+  fillOpacity?: number
+  pointType?: string
+  showRange?: boolean
+  shadow?: boolean
 }
 
 export type MarkerTypes = 'square' | 'triangle' | 'circle' | 'diamond'

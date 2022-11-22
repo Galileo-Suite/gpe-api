@@ -64,6 +64,9 @@ export const lineFromPanelOptions = (dataframes: DataFrame[], options: Highchart
 
   hcOptions.chart = {...hcOptions.chart}
   hcOptions.chart.type = getChartType(highchartLineOptions)
+  hcOptions.series.forEach(s=>{
+    s.type = getChartType(highchartLineOptions)
+  })
 
   merge(hcOptions, {
     plotOptions: {

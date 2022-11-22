@@ -10,9 +10,15 @@ export type SimpleSeries = Omit<Highcharts.SeriesOptions, 'data'> & {
   custom: pointCustom
   color?: string
   marker?: {
+    symbol?: string
     enabled?: boolean,
     radius?: number
   }
+  showInLegend?: boolean,
+  visible?: boolean,
+  fillOpacity?: number,
+  fillColor?: string,
+  lineWidth?: number,
 }
 
 

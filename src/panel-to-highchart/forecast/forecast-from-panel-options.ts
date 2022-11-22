@@ -29,20 +29,85 @@ export const forecastFromPanelOptions = (dataframes: DataFrame[], options: Highc
 
   let systems = []
 
+  let rangeLineType: string
+  let lineType: string
+
+  if (highchartForecastOptions.pointType === 'spline') {
+    rangeLineType = 'areasplinerange'
+    lineType = 'spline'
+  } else {
+    rangeLineType = 'arearange'
+    lineType = 'line'
+  }
+
+  // let color = 'rgba(202, 210, 197, 0.25)'
+
   series.forEach(s => {
-    console.log(s)
-    if (s.name?.includes('upper')) {
-      s.color = '#CAD2C533'
-    } else if (s.name?.includes('forecast')) {
-      s.color = '#5B618A'
-    } else {
-      s.color = '#9EADC8'
+    s.marker = {}
+    if (s.marker !== undefined) {
+      if (s.name?.includes('upper') && 'marker' in s) {
+        s.color =  `rgba(202, 210, 197, 1)`,
+        s.fillColor =  `rgba(202, 210, 197, ${highchartForecastOptions.fillOpacity})`,
+        s.showInLegend = false,
+        s.visible = highchartForecastOptions.showRange,
+        s.type = rangeLineType,
+        s.lineWidth = highchartForecastOptions.rangeLineWidth,
+        s.marker.enabled = highchartForecastOptions.rangeMarker,
+        s.marker.radius = highchartForecastOptions.markerRadius,
+        s.marker.symbol = 'circle'
+      } else if (s.name?.includes('forecast')) {
+        s.color = '#5B618A',
+        s.showInLegend = false,
+        s.type = lineType,
+        s.visible = highchartForecastOptions.showForecast,
+        s.lineWidth = highchartForecastOptions.forecastLineWidth,
+        s.marker.enabled = highchartForecastOptions.forecastMarker ,
+        s.marker.radius = highchartForecastOptions.markerRadius,
+        s.marker.symbol = 'circle'
+      } else {
+        s.color = '#9EADC8',
+        s.type = lineType,
+        s.lineWidth = highchartForecastOptions.lineWidth,
+        s.marker.enabled = highchartForecastOptions.marker
+        s.marker.radius = highchartForecastOptions.markerRadius,
+        s.marker.symbol = 'circle'
+      }
     }
   })
 
   hcOptions.series = series
 
   merge(hcOptions.series, series)
+
+  let click = {
+    plotOptions: {
+      series: {
+        events: {       
+          legendItemClick: function (this: Highcharts.Series) {
+            console.log(this)
+            let name = this.name
+            let state = this.visible
+            let newState = false
+            if (state === false) {
+              newState = true
+            } 
+
+            this.chart.series.forEach(s => {
+              if (s.name.includes(name)) {
+                //@ts-ignore
+                s.update({
+                  visible: newState
+                })
+              }
+            })
+            return false
+          }
+        }
+      }
+    }
+  }
+
+  merge(hcOptions, click)
 
   return hcOptions
 }
